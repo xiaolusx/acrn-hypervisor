@@ -101,10 +101,13 @@ function build_docker_image()
 
 #	docker exec ${ACRN_DOCKER_NAME} swupd update
 	echo -n "swupd bundle-add start @"; date
-	docker exec ${ACRN_DOCKER_NAME} sh -c "swupd bundle-add \
-		c-basic storage-utils-dev  dev-utils-dev user-basic-dev > /dev/null 2>&1" || exit -1;
+	docker exec ${ACRN_DOCKER_NAME} sh -c "swupd bundle-add --skip-diskspace-check \
+		c-basic storage-utils-dev  dev-utils-dev user-basic-dev > /dev/null 2>&1" \
+		|| { guestunmount ${mnt_pt}; exit -1; }
+
 	echo -n "swupd bundle-add end @"; date
-	docker exec ${ACRN_DOCKER_NAME} sh -c "pip3 install kconfiglib" || exit -1;
+	docker exec ${ACRN_DOCKER_NAME} sh -c "pip3 install kconfiglib" \
+		|| { guestunmount ${mnt_pt}; exit -1; }
 
 	for pkg in `ls linux-firmware-*`; do
 	   docker exec ${ACRN_DOCKER_NAME} ${ACRN_MNT_VOL}/10-unpack-rpm.sh "${ACRN_MNT_VOL}/${pkg}" "/"
