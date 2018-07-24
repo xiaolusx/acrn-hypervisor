@@ -10,6 +10,12 @@ or hard disk to demo ACRN. Currently, final disk image doesn't include
 UOS. You can manually copy the rootfs of UOS into the 4rd partition of
 the image. 
 
+   by default, it creates:
+       1. disk image:   ${ACRN_HOST_DIR}/${ACRN_DISK_IMAGE}
+       2. sos rootfs:   ${ACRN_HOST_DIR}/out/sos_rootfs.tgz
+       3. EFI ESP partition: ${ACRN_HOST_DIR}/out/esp_partition.tgz
+       4. out/{acrn.conf, acrn.efi, loader.conf,  vmlinuz-4.14.xx-acrn}
+
    In most cases, you just need to modify one or two environment variables
 defined at the beginning of the script 0-run-all.sh
 
@@ -40,36 +46,39 @@ failed, you can :
 
 About the scripts
 -----------------
-  a)  0-run-all.sh
+  a)  00-run-all.sh
       it calls the all the other scripts; the environment variables defined
       in this script will be passed to other scripts. At last, it tries to
       start ACRN hypervisor and SOS in OVMF (might fail if OVMF changes)
  
-  b) 1-build-env-check.sh
+  b) 01-build-env-check.sh
       check if necessary commands are installed on host system;
 
-  c) 2-docker-from-clear.sh
+  c) 02-docker-from-clear.sh
       Pull clearlinux kvm image to build an docker image as dev environment
 
-  d) 3-setup-clearlinux-docker.sh
+  d) 03-setup-clearlinux-docker.sh
       Use the docker image built by 2-docker-from-clear.sh to start a docker
 
-  e) 4-prepare-sos-source.sh
+  e) 04-prepare-sos-source.sh
        Pull code from github.com and www.kernel.org to build SOS source code
 
-  f) 5-clone-hv-dm.sh
+  f) 05-clone-hv-dm.sh
        Clone ACRN hypervisor and device model code into /acrn-vol in docker
 
-  g) 6-build-uefi-acrn.sh
+  g) 06-build-uefi-acrn.sh
        Build(compile) ACRN related code, including hypervisor and SOS
 
-  h) 7-mk-disk-image.sh
+  h) 07-mk-disk-image.sh
        Create a disk image including ACRN hyperviosr and SOS
 
-  i) 8-download-ovmf.sh
+  i) 08-extract-rootfs.sh
+       extract ESP, SOS rootfs from the disk image created in script 07
+
+  j) 09-download-ovmf.sh
        Download OVMF binary from https://www.kraxel.org/repos/jenkins/edk2
 
-  j) 9-unpack-rpm.sh
+  k) 10-unpack-rpm.sh
        ultility to unpack/install a RPM package for clearlinux doesn't use RPM
 
 

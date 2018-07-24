@@ -23,8 +23,8 @@
 # a KVM image from http://clearlinux.org and use it as base image for docker.
 # By default, the latest KVM image by parsing the web page:
 #               https://cdn.download.clearlinux.org/current/
-export ACRN_CLEAR_OS_VERSION=23850
-# export ACRN_CLEAR_OS_VERSION=""
+# export ACRN_CLEAR_OS_VERSION=23850
+export ACRN_CLEAR_OS_VERSION=""
 
 # The folder will be mounted into docker as volume in docker's word, to the
 # mounting point at ${ACRN_MNT_VOL}. It is used as work diretory (pwd) to git
@@ -37,7 +37,7 @@ export ACRN_HOST_DIR=/work/vdisk
 
 # The final disk image layout for qemu/ovmf or dd to disk, change it as u like
 export ACRN_DISK_IMAGE=acrn_vdisk_all.img
-export ACRN_DISK_SIZE=15000  # disk size (MB)
+export ACRN_DISK_SIZE=5000  # disk size (MB)
 export ACRN_DISK_P1=200      # EFI ESP
 export ACRN_DISK_P2=200      # Linux swap
 export ACRN_DISK_P3=3000     # sos rootfs
@@ -98,8 +98,8 @@ truncate -s 0 ${LOG_FILE}
 set -o pipefail
 
 # Check if build environment is ok
-{ echo -n "==== Runing script 1-build-env-check.sh  ====@ "; date; } >> ${LOG_FILE}
-./1-build-env-check.sh 2>&1 | tee -a ${LOG_FILE}
+{ echo -n "==== Runing script 01-build-env-check.sh  ====@ "; date; } >> ${LOG_FILE}
+./01-build-env-check.sh 2>&1 | tee -a ${LOG_FILE}
 [ $? -ne 0 ] && exit 1
 
 echo "======================================================================"
@@ -109,47 +109,47 @@ echo -e " you run this script at night"
 echo "======================================================================"
 
 # Pull KVM image of clearlinux, and build a docker image as dev environment
-{ echo -n "==== Runing script 2-docker-from-clear.sh  ====@ "; date; } >> ${LOG_FILE}
-./2-docker-from-clear.sh 2>&1 | tee -a ${LOG_FILE}
+{ echo -n "==== Runing script 02-docker-from-clear.sh  ====@ "; date; } >> ${LOG_FILE}
+./02-docker-from-clear.sh 2>&1 | tee -a ${LOG_FILE}
 [ $? -ne 0 ] && { echo "failed to build clearlinux docker image"; exit -1; }
 
 # Create and run ClearLinux Docker
-{ echo -n "==== Runing script 3-setup-clearlinux-docker.sh ====@ "; date; } >> ${LOG_FILE}
-./3-setup-clearlinux-docker.sh 2>&1 | tee -a ${LOG_FILE}
+{ echo -n "==== Runing script 03-setup-clearlinux-docker.sh ====@ "; date; } >> ${LOG_FILE}
+./03-setup-clearlinux-docker.sh 2>&1 | tee -a ${LOG_FILE}
 [ $? -ne 0 ] && { echo "failed to run clearlinux docker"; exit -1; }
 
 # prepare SOS kernel source code
-{ echo -n "==== Runing script 4-prepare-sos-source.sh  ====@ "; date; } >> ${LOG_FILE}
-docker exec ${ACRN_DOCKER_NAME}  ${ACRN_MNT_VOL}/4-prepare-sos-source.sh 2>&1 \
+{ echo -n "==== Runing script 04-prepare-sos-source.sh  ====@ "; date; } >> ${LOG_FILE}
+docker exec ${ACRN_DOCKER_NAME}  ${ACRN_MNT_VOL}/04-prepare-sos-source.sh 2>&1 \
 	| tee -a ${LOG_FILE}
 [ $? -ne 0 ] && { echo "failed to get SOS kernel source"; exit 1; }
 
 # prepare HV/DM source code
-{ echo -n "==== Runing script 5-clone-hv-dm.sh  ====@ "; date; } >> ${LOG_FILE}
-docker exec ${ACRN_DOCKER_NAME}  ${ACRN_MNT_VOL}/5-clone-hv-dm.sh 2>&1 | \
+{ echo -n "==== Runing script 05-clone-hv-dm.sh  ====@ "; date; } >> ${LOG_FILE}
+docker exec ${ACRN_DOCKER_NAME}  ${ACRN_MNT_VOL}/05-clone-hv-dm.sh 2>&1 | \
        	tee -a ${LOG_FILE}
 [ $? -ne 0 ] && { echo "failed to get ACRN hypervisor source"; exit 1; }
 
 # build source to binary
-{ echo -n "==== Runing script 6-build-uefi-acrn.sh  ====@ "; date; }  >> ${LOG_FILE}
-docker exec ${ACRN_DOCKER_NAME} ${ACRN_MNT_VOL}/6-build-uefi-acrn.sh 2>&1 \
+{ echo -n "==== Runing script 06-build-uefi-acrn.sh  ====@ "; date; }  >> ${LOG_FILE}
+docker exec ${ACRN_DOCKER_NAME} ${ACRN_MNT_VOL}/06-build-uefi-acrn.sh 2>&1 \
 	| tee -a ${LOG_FILE}
 [ $? -ne 0 ] && { echo "failed to build SOS"; exit; }
 
 # Create a disk image
-{ echo -n "==== Runing script 7-mk-disk-image.sh  ====@ "; date; } >> ${LOG_FILE}
-docker exec ${ACRN_DOCKER_NAME} ${ACRN_MNT_VOL}/7-mk-disk-image.sh  2>&1 \
+{ echo -n "==== Runing script 07-mk-disk-image.sh  ====@ "; date; } >> ${LOG_FILE}
+docker exec ${ACRN_DOCKER_NAME} ${ACRN_MNT_VOL}/07-mk-disk-image.sh  2>&1 \
 	| tee -a ${LOG_FILE}
 [ $? -ne 0 ] && { echo "failed to create disk image"; exit; }
 
 # extract sos rootfs from disk image
-{ echo -n "==== Runing script 8-extract-rootfs.sh  ====@ "; date; } >> ${LOG_FILE}
-./8-extract-rootfs.sh  2>&1 | tee -a ${LOG_FILE}
+{ echo -n "==== Runing script 08-extract-rootfs.sh  ====@ "; date; } >> ${LOG_FILE}
+./08-extract-rootfs.sh  2>&1 | tee -a ${LOG_FILE}
 [ $? -ne 0 ] && { echo "failed to extract rootfs from acrn disk image"; exit; }
 
 # download OVMF efi firmware
-{ echo -n "==== Runing script 9-download-ovmf.sh  ====@ "; date; } >> ${LOG_FILE}
-docker exec ${ACRN_DOCKER_NAME} ${ACRN_MNT_VOL}/9-download-ovmf.sh 2>&1 \
+{ echo -n "==== Runing script 09-download-ovmf.sh  ====@ "; date; } >> ${LOG_FILE}
+docker exec ${ACRN_DOCKER_NAME} ${ACRN_MNT_VOL}/09-download-ovmf.sh 2>&1 \
 	| tee -a ${LOG_FILE}
 
 # change ownership

@@ -30,8 +30,8 @@ cp ${IMG_P1}/loader/loader.conf out/ || exit 1
 cp ${IMG_P1}/EFI/org.clearlinux/acrn.efi out/ || exit 1
 cp ${IMG_P1}/EFI/org.clearlinux/*acrn out/ || exit 1
 
-guestunmount ./${IMG_P1} 
-guestunmount ./${IMG_P3}
+guestunmount ${IMG_P1} 
+guestunmount ${IMG_P3}
 
 rmdir  ${IMG_P1} ${IMG_P3}
 
