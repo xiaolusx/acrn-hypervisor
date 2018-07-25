@@ -27,7 +27,7 @@
 # a KVM image from http://clearlinux.org and use it as base image for docker.
 # By default, the latest KVM image by parsing the web page:
 #               https://cdn.download.clearlinux.org/current/
-# export ACRN_CLEAR_OS_VERSION=23850
+# export ACRN_CLEAR_OS_VERSION=23940
 export ACRN_CLEAR_OS_VERSION=""
 
 # The folder will be mounted into docker as volume in docker's word, to the
@@ -57,6 +57,11 @@ export ACRN_DISK_SPARSE_IMAGE=1
 # build ACRN source code and disk image.
 export ACRN_DOCKER_NAME=acrn-dev
 
+# The info is used to git config user.mail & user.name in docker;
+# You can change it to yours if you want. We need to set it because we
+# use "git am" to apply clearlinux-pk414 patches to linux stable tree.
+export ACRN_GIT_USER_NAME="test"
+export ACRN_GIT_USER_EMAIL="test@gmail.com"
 
 # If you are in China, define this. we will try to use mirror of china.
 # like,  www.kernel.org ==> mirror.tuna.tsinghua.edu.cn
@@ -64,7 +69,8 @@ export ACRN_I_AM_IN_CHINA=1
 
 # Set mirrors for some code/repo if you are in China
 if [ ${ACRN_I_AM_IN_CHINA} -eq 1 ]; then
-  export ACRN_LINUX_STABLE_GIT=https://mirrors.tuna.tsinghua.edu.cn/git/linux-stable.git
+ export ACRN_LINUX_STABLE_GIT=https://mirrors.tuna.tsinghua.edu.cn/git/linux-stable.git
+ # export ACRN_LINUX_STABLE_GIT=linux-stable
   export ACRN_PIP_SOURCE=https://pypi.tuna.tsinghua.edu.cn/simple  # https is required
 else
   unset ACRN_LINUX_STABLE_GIT

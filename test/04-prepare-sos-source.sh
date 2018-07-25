@@ -69,6 +69,7 @@ wget_or_gitclone_kernel() {
 	cd ${SOS_DIR};
 	git init . && git add * && git commit -a -m "linux stable kernel ${SOS_DIR}"
 	[ $? -ne 0 ] && { echo "Failed to init git by ${KERNEL_XZ}"; exit 1; }
+	cd ..
 	return 0
 }
 
@@ -102,14 +103,15 @@ fi;
 if [ -d ${SOS_DIR} ]; then
 	echo "SOS source exsits, use the old";
 else
-	wget_or_gitclone_kernel
+       	wget_or_gitclone_kernel
 	[ $? -ne 0 ] && { echo "Remove the ${SOS_DIR} before re-run scripts again"; exit 1; }
 
+	cd ${SOS_DIR}
 	# apply the patches in pk414 repo to SOS kernel
-	git am ../linux-pk414/*.patch
+	git am ../linux-pk414/*.patch || { echo "Failed to apply linux-pk414 patches to ${SOS_DIR}"; exit 1; }
 	mkdir -p firmware
-	cp -a /lib/firmware/intel-ucode firmware/
-	cp -a /lib/firmware/i915 firmware/
+	cp -a /lib/firmware/intel-ucode firmware
+	cp -a /lib/firmware/i915 firmware
 fi;
 
 

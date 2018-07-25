@@ -123,6 +123,9 @@ function build_docker_image()
 	   docker exec ${ACRN_DOCKER_NAME} ${ACRN_MNT_VOL}/10-unpack-rpm.sh "${ACRN_MNT_VOL}/${pkg}" "/"
 	done;
 
+	docker exec ${ACRN_DOCKER_NAME} sh -c "git config --global user.name=${ACRN_GIT_USER_NAME}"
+	docker exec ${ACRN_DOCKER_NAME} sh -c "git config --global user.email=${ACRN_GIT_USER_EMAIL}"
+
 	docker stop ${ACRN_DOCKER_NAME}
 	docker commit ${ACRN_DOCKER_NAME} ${ACRN_DOCKER_IMAGE}:$1
 	docker rm ${ACRN_DOCKER_NAME}
