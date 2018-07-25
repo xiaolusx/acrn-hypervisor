@@ -9,6 +9,10 @@
 # After service OS boots up, you can login into the system as root without
 # password, and take a look at /root/nuc/launch_uos.sh, and learn about
 # start guest OS.
+
+# Since dd image to disk is too time-consumping, the scripts also create
+# tarball of sos_rootfs.tgz, UEFI ESP partion, and individual binary in
+# ${ACRN_HOST_DIR}/out dir.
 #
 # Make sure that system has the following commands before executing 
 #     wget, curl, sha512sum, grep, sed, xz, basename, dirname,
@@ -31,8 +35,8 @@ export ACRN_CLEAR_OS_VERSION=""
 # clone acrn code, build disk image(20GB). Make sure that it has enough space.
 # The script will create the dir if it doens't exsit. Change layout as you like.
 #
-export ACRN_HOST_DIR=/work/vdisk
-# export ACRN_HOST_DIR=/home/${USER}/vdisk
+# export ACRN_HOST_DIR=/work/vdisk
+export ACRN_HOST_DIR=/home/${USER}/vdisk
 
 
 # The final disk image layout for qemu/ovmf or dd to disk, change it as u like
@@ -53,6 +57,19 @@ export ACRN_DISK_SPARSE_IMAGE=1
 # build ACRN source code and disk image.
 export ACRN_DOCKER_NAME=acrn-dev
 
+
+# If you are in China, define this. we will try to use mirror of china.
+# like,  www.kernel.org ==> mirror.tuna.tsinghua.edu.cn
+export ACRN_I_AM_IN_CHINA=1
+
+# Set mirrors for some code/repo if you are in China
+if [ ${ACRN_I_AM_IN_CHINA} -eq 1 ]; then
+  export ACRN_LINUX_STABLE_GIT=https://mirrors.tuna.tsinghua.edu.cn/git/linux-stable.git
+  export ACRN_PIP_SOURCE=https://pypi.tuna.tsinghua.edu.cn/simple  # https is required
+else
+  unset ACRN_LINUX_STABLE_GIT
+  unset ACRN_PIP_SOURCE
+fi;
 
 # =========================================================================
 # Most likely, you needn't modify the script after this line
@@ -104,7 +121,7 @@ set -o pipefail
 
 echo "======================================================================"
 echo -ne "It will take \033[31m hours \033[0m to download clearlinux image and"
-echo -ne " bundles if you are downloading a new version; check it tommorrow if"
+echo -ne " bundles if you are downloading a new version; check it tomorrow if"
 echo -e " you run this script at night"
 echo "======================================================================"
 

@@ -1,8 +1,10 @@
 
   The scripts in this directory are to create a disk image to run acrn
-hypervisor and service OS. It pulls opensourced code from github.com,
-projectacrn and clearlinux git, build the code, and then create a disk
-image.
+hypervisor and service OS; and/or individual binary/tarball for SOS/ESP,
+etc. It pulls opensourced code from github.com, projectacrn and clearlinux
+pk414 git, build the code, and then create a disk image, and also extract
+the SOS rootfs and UEFI ESP partition into individual tarball. Choose what
+you want.
 
   Just run the first script (0-run-all.sh) to get an image, which can
 be used in qemu/ovmf or simics. The image also can be "dd" to USB disk
@@ -10,14 +12,15 @@ or hard disk to demo ACRN. Currently, final disk image doesn't include
 UOS. You can manually copy the rootfs of UOS into the 4rd partition of
 the image. 
 
-   by default, it creates:
+   By default, it creates:
        1. disk image:   ${ACRN_HOST_DIR}/${ACRN_DISK_IMAGE}
        2. sos rootfs:   ${ACRN_HOST_DIR}/out/sos_rootfs.tgz
        3. EFI ESP partition: ${ACRN_HOST_DIR}/out/esp_partition.tgz
        4. out/{acrn.conf, acrn.efi, loader.conf,  vmlinuz-4.14.xx-acrn}
++++ NOTE: Double check the "root=PARTUUID" in acrn.conf for SOS root partition +++
 
    In most cases, you just need to modify one or two environment variables
-defined at the beginning of the script 0-run-all.sh
+defined at the beginning of the script 00-run-all.sh
 
    ACRN_CLEAR_OS_VERSION=23550   # version# of clearlinux, or "" for latest
 
@@ -83,12 +86,13 @@ About the scripts
 
 
 
-QA:
+QA
 ---
  1. Occasionally, an error message will be printed by curl, like,
        curl: (23) Failed writing body (0 != 1412)
-
     It should be fine since in piped shell commands, say curl | grep, the grep
     command got what he wants and closed pipe before curl completed writing. 
   
-
+ 2. For whatever reason, it is slow for guys in China to download some of those
+    code from www.kernel.org, pip source, etc. Please use the mirror you know it
+    is fast for you. Currently, we choose the Mirror from Tsinghua University.
