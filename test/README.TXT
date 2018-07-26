@@ -9,9 +9,9 @@ NOTE:
       modifiy ACRN_LINUX_STABLE_GIT definition in script 00 to this repo. For
       example,
 
-         # cd ~/
+         # cd ${ACRN_HOST_DIR}
          # git clone https://mirrors.tuna.tsinghua.edu.cn/git/linux-stable.git
-         # export ACRN_LINUX_STABLE_GIT=/home/$USER/linux-stable.git
+         # modify script-00: export ACRN_LINUX_STABLE_GIT=${ACRN_MNT_VOL}/linux-stable.git
 
 ===============================================================================
 

@@ -36,8 +36,10 @@ export ACRN_CLEAR_OS_VERSION=""
 # The script will create the dir if it doens't exsit. Change layout as you like.
 #
 # export ACRN_HOST_DIR=/work/vdisk
-export ACRN_HOST_DIR=/home/${USER}/vdisk
+ export ACRN_HOST_DIR=/home/${USER}/vdisk
 
+# Mounting point in docker for ACRN_HOST_DIR. Needn't touch it
+export ACRN_MNT_VOL=/acrn-vol
 
 # The final disk image layout for qemu/ovmf or dd to disk, change it as u like
 export ACRN_DISK_IMAGE=acrn_vdisk_all.img
@@ -74,10 +76,10 @@ if [ ${ACRN_I_AM_IN_CHINA} -eq 1 ]; then
  # and then, modify this macro to your local git.  For exmaple, we git clone
  # it to home dir, and then, modify this macro to: /home/$USER/linux-stable.
  #
- # export ACRN_LINUX_STABLE_GIT=/home/$USER/linux-stable
- export ACRN_LINUX_STABLE_GIT=https://mirrors.tuna.tsinghua.edu.cn/git/linux-stable.git
+     export ACRN_LINUX_STABLE_GIT=${ACRN_MNT_VOL}/linux-stable
+#    export ACRN_LINUX_STABLE_GIT=https://mirrors.tuna.tsinghua.edu.cn/git/linux-stable.git
+     export ACRN_PIP_SOURCE=https://pypi.tuna.tsinghua.edu.cn/simple  # https is required
 
-  export ACRN_PIP_SOURCE=https://pypi.tuna.tsinghua.edu.cn/simple  # https is required
 else
   unset ACRN_LINUX_STABLE_GIT
   unset ACRN_PIP_SOURCE
@@ -106,8 +108,6 @@ export ACRN_UEFI_FW=OVMF-pure-efi.fd
 # Save environment between scripts. Needn't touch it.
 export ACRN_ENV_VARS=acrn-env.txt
 
-# Mounting point in docker for ACRN_HOST_DIR. Needn't touch it
-export ACRN_MNT_VOL=/acrn-vol
 
 mkdir -p ${ACRN_HOST_DIR}/
 
