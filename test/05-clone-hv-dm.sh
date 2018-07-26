@@ -22,16 +22,25 @@ cd ${ACRN_MNT_VOL} || { echo "Failed to cd "${ACRN_MNT_VOL}; exit -1; }
 
 [ -z ${ACRN_TRACE_SHELL_ENABLE} ] || set -x
 
-[ -d ${ACRN_HV_DIR} ] || git clone ${URL_ACRN}/${ACRN_HV_DIR}
+if [ ! -d ${ACRN_HV_DIR} ]; then
+	git clone ${URL_ACRN}/${ACRN_HV_DIR} || 
+		{ echo "Failed to git-clone ${URL_ACRN}${ACRN_HV_DIR}"; exit 1; }
 
-if [ $? -ne 0 ]; then
-        echo "Failed to git-clone"
-        exit $?
-else
         echo "Completed git-clone ACRN hypervisor and device model"
+
+	if [ -n ${ACRN_UOS_VSBL} ] && [ ${ACRN_UOS_VSBL} -eq 1 ]; then
+		cd ${ACRN_HV_DIR};
+		for i in `ls ../*.patch`; do
+			echo "Patch ${i} to acrn-hypervisor";
+			git am  $i; 
+		       [ $? -ne 0 ] && { echo "Failed to apply $i to hypervisor"; exit 1; }
+		done;
+	fi;
+
 fi;
 
 export ACRN_HV_DIR=${ACRN_HV_DIR}
+
 
 env | grep ACRN > ${ACRN_MNT_VOL}/${ACRN_ENV_VARS}
 

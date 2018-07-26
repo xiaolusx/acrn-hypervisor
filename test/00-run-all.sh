@@ -23,6 +23,10 @@
 [ $# -ne 0 ] && LOG_FILE=$1 || LOG_FILE=log.txt
 
 
+# set this if UOS boots from realmode on virtual SBL; don't set it if UOS boot
+# from protected mode.
+# export ACRN_UOS_VSBL=1
+
 # The release# of clearlinux in /usr/lib/os-release: like 23140, we will pull
 # a KVM image from http://clearlinux.org and use it as base image for docker.
 # By default, the latest KVM image by parsing the web page:
@@ -36,7 +40,7 @@ export ACRN_CLEAR_OS_VERSION=""
 # The script will create the dir if it doens't exsit. Change layout as you like.
 #
 # export ACRN_HOST_DIR=/work/vdisk
- export ACRN_HOST_DIR=/home/${USER}/vdisk
+export ACRN_HOST_DIR=/home/${USER}/vdisk
 
 # Mounting point in docker for ACRN_HOST_DIR. Needn't touch it
 export ACRN_MNT_VOL=/acrn-vol
@@ -119,6 +123,7 @@ if [ ! `pwd` = ${ACRN_HOST_DIR} ]; then
 	cp -af *.sh ${ACRN_HOST_DIR} ||
 	    { echo "check if the dir ${ACRN_HOST_DIR} is writable for \"${USER}\"";
 	    exit 1; }
+	[ -n ${ACRN_UOS_VSBL} ] && [ ${ACRN_UOS_VSBL} -eq 1 ] && cp uos-boot-realmode.patch ${ACRN_HOST_DIR}/
 fi;
 
 cd ${ACRN_HOST_DIR}/
