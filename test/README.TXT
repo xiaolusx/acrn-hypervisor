@@ -1,3 +1,19 @@
+NOTE:
+  1.  CLONE STABLE KERNEL TO LOCAL FILE SYSTEM 
+
+      Please do this so as not to push too pressure on public & free linux
+      kernel mirror, meanwhile, it spends up the execution of the scripts if
+      you run the scripts more than one time.
+
+      Manually,  "git clone" a stable kernel to local file system, and then
+      modifiy ACRN_LINUX_STABLE_GIT definition in script 00 to this repo. For
+      example,
+
+         # cd ~/
+         # git clone https://mirrors.tuna.tsinghua.edu.cn/git/linux-stable.git
+         # export ACRN_LINUX_STABLE_GIT=/home/$USER/linux-stable.git
+
+===============================================================================
 
   The scripts in this directory are to create a disk image to run acrn
 hypervisor and service OS; and/or individual binary/tarball for SOS/ESP,
@@ -83,7 +99,6 @@ About the scripts
 
   k) 10-unpack-rpm.sh
        ultility to unpack/install a RPM package for clearlinux doesn't use RPM
-
 
 
 QA

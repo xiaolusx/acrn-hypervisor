@@ -124,6 +124,7 @@ let idx=`expr index ${BZ_NAME} "-"`
 MODS_NAME=${BZ_NAME:${idx}}
 
 MODS_FPATH=${BZ_DIR}/"lib/modules/"${MODS_NAME}
+[ ! -d ${MODS_FPATH} ] && [ -d "${MODS_FPATH}+" ] && MODS_FPATH="${MODS_FPATH}+";
 [ ! -d ${MODS_FPATH} ] && { echo "Failed to get linux modules: "${MODS_FPATH}; exit 1; }
 
 # download Clearlinux KVM image if not exits

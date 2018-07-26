@@ -35,8 +35,8 @@ export ACRN_CLEAR_OS_VERSION=""
 # clone acrn code, build disk image(20GB). Make sure that it has enough space.
 # The script will create the dir if it doens't exsit. Change layout as you like.
 #
-export ACRN_HOST_DIR=/work/vdisk
-#  export ACRN_HOST_DIR=/home/${USER}/vdisk
+# export ACRN_HOST_DIR=/work/vdisk
+export ACRN_HOST_DIR=/home/${USER}/vdisk
 
 
 # The final disk image layout for qemu/ovmf or dd to disk, change it as u like
@@ -69,8 +69,14 @@ export ACRN_I_AM_IN_CHINA=1
 
 # Set mirrors for some code/repo if you are in China
 if [ ${ACRN_I_AM_IN_CHINA} -eq 1 ]; then
+
+ # The best way is to git clone this stable tree to your local file system;
+ # and then, modify this macro to your local git.  For exmaple, we git clone
+ # it to home dir, and then, modify this macro to: /home/$USER/linux-stable.
+ #
+ # export ACRN_LINUX_STABLE_GIT=/home/$USER/linux-stable
  export ACRN_LINUX_STABLE_GIT=https://mirrors.tuna.tsinghua.edu.cn/git/linux-stable.git
- # export ACRN_LINUX_STABLE_GIT=linux-stable
+
   export ACRN_PIP_SOURCE=https://pypi.tuna.tsinghua.edu.cn/simple  # https is required
 else
   unset ACRN_LINUX_STABLE_GIT
