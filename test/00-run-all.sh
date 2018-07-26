@@ -35,8 +35,8 @@ export ACRN_CLEAR_OS_VERSION=""
 # clone acrn code, build disk image(20GB). Make sure that it has enough space.
 # The script will create the dir if it doens't exsit. Change layout as you like.
 #
-# export ACRN_HOST_DIR=/work/vdisk
-export ACRN_HOST_DIR=/home/${USER}/vdisk
+export ACRN_HOST_DIR=/work/vdisk
+#  export ACRN_HOST_DIR=/home/${USER}/vdisk
 
 
 # The final disk image layout for qemu/ovmf or dd to disk, change it as u like

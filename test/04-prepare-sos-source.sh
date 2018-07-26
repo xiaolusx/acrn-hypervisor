@@ -55,8 +55,23 @@ get_base_kernel_version() {
 wget_or_gitclone_kernel() {
 
 	if [ ! -r ${KERNEL_XZ} ] && [ -n ${ACRN_LINUX_STABLE_GIT} ]; then
-		git clone ${ACRN_LINUX_STABLE_GIT} ${SOS_DIR} && return 0;
+		LINUX_VERSION=${SOS_DIR:6}
+		CUR_BRANCH=linux-v${LINUX_VERSION}
+		git clone ${ACRN_LINUX_STABLE_GIT} ${SOS_DIR} ||
+			{ echo "Failed to git clone ${ACRN_LINUX_STABLE_GIT}"; exit 1; }
+		cd ${SOS_DIR};
+
+		# checkout the tag specified in clearlinux RPM_SPEC
+		git checkout "v${LINUX_VERSION}" ||
+		    { echo -n "${ACRN_LINUX_STABLE_GIT} doesn't have v${LINUX_VERSION},";
+		      echo -n "try update your git and then re-run the scripts"; exit 1; }
+
+		# create a branch with this linux tag, say v4.14.56
+		git branch ${CUR_BRANCH}  && git checkout ${CUR_BRANCH} && return 0;
 	fi;
+
+	# Delete the dir if git clone failed, and then try get xz tarball
+	cd ${ACRN_MNT_VOL}; rm -fr ${SOS_DIR}
 
 	if [ -r ${KERNEL_XZ} ]; then
 		echo ${KERNEL_XZ}" exsits, will use it instead of download it again"
