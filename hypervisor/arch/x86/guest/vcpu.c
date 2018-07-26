@@ -513,7 +513,7 @@ int prepare_vcpu(struct vm *vm, uint16_t pcpu_id)
 		} else {
 #ifdef CONFIG_EFI_STUB
 			/* currently non-vm0 will boot kernel directly */
-			vcpu->arch_vcpu.cpu_mode = CPU_MODE_PROTECTED;
+			vcpu->arch_vcpu.cpu_mode = CPU_MODE_READL;
 #else
 			vcpu->arch_vcpu.cpu_mode = CPU_MODE_REAL;
 #endif
