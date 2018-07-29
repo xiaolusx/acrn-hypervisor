@@ -95,9 +95,9 @@ function build_docker_image()
 		-it ${ACRN_DOCKER_IMAGE}:"t"$1 "/bin/bash"
 
 	docker start ${ACRN_DOCKER_NAME}
-	docker exec ${ACRN_DOCKER_NAME} sh -c "mkdir -p /etc/ssl/certs/"
-	docker exec ${ACRN_DOCKER_NAME} sh -c "cp ${ACRN_MNT_VOL}/${PEM_SUPD} /etc/ssl/certs/"
-	docker exec ${ACRN_DOCKER_NAME} sh -c "cp ${ACRN_MNT_VOL}/${PEM_CLEAR} /etc/ssl/certs/"
+#	docker exec ${ACRN_DOCKER_NAME} sh -c "mkdir -p /etc/ssl/certs/"
+#	docker exec ${ACRN_DOCKER_NAME} sh -c "cp ${ACRN_MNT_VOL}/${PEM_SUPD} /etc/ssl/certs/"
+#	docker exec ${ACRN_DOCKER_NAME} sh -c "cp ${ACRN_MNT_VOL}/${PEM_CLEAR} /etc/ssl/certs/"
 
 #	docker exec ${ACRN_DOCKER_NAME} swupd update
 	echo -n "swupd bundle-add start @"; date

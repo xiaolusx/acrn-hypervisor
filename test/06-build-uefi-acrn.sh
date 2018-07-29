@@ -45,10 +45,10 @@ build_sos_kernel() {
         sed -i 's/.*CONFIG_USB_XHCI_PLATFORM[ =].*$/CONFIG_USB_XHCI_PLATFORM=y/' .config
         fi;
 
-	make oldconfig
-
         # accept default options (no firmware build)
-        (echo -e "n\nn\nn\nn\nn\n") | make 
+	yes "" | make oldconfig
+
+	make 
         make modules
 	make bzImage
         make modules_install
