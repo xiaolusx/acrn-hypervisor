@@ -53,6 +53,8 @@ IMAGE_XZ=clear-${VERSION_ID}-kvm.img.xz
 FILE_SHA1=${IMAGE_XZ}-SHA512SUMS
 FILE_SIG=${IMAGE_XZ}-SHA512SUMS.sig
 
+export ACRN_DISK_IMAGE="${ACRN_DISK_IMAGE}_clear${VERSION_ID}.img"
+
 # Fdisk a disk image to 4 partition(ESP, swap, rootfs, user)
 #       $1 --- the name of disk image
 fdisk_img() {

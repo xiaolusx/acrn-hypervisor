@@ -46,7 +46,9 @@ export ACRN_HOST_DIR=/home/${USER}/vdisk
 export ACRN_MNT_VOL=/acrn-vol
 
 # The final disk image layout for qemu/ovmf or dd to disk, change it as u like
-export ACRN_DISK_IMAGE=acrn_vdisk_all.img
+# the name of the image will be ${ACRN_DISK_IMAGE}_clearnnnnn.img, which saying
+# the ACRN disk image is created based on clearlinux_nnnnn version.
+export ACRN_DISK_IMAGE=acrn_vdisk
 export ACRN_DISK_SIZE=5000  # disk size (MB)
 export ACRN_DISK_P1=200      # EFI ESP
 export ACRN_DISK_P2=200      # Linux swap
