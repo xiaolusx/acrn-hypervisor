@@ -28,7 +28,7 @@ PEM_CLEAR='ClearLinuxRoot.pem'
 name_conflict()
 {
 	RET=`docker ps -a -q --format='{{.Names}}' | grep ${ACRN_DOCKER_NAME}`
-	if [ ${RET}X == ${ACRN_DOCKER_NAME}X ]; then
+	if [ "${RET}X" == "${ACRN_DOCKER_NAME}X" ]; then
 		echo -n -e  "The Docker \"${ACRN_DOCKER_NAME}\" exists; "
 		return 1
 	fi;
@@ -40,7 +40,7 @@ name_conflict()
 function get_url()
 {
 	### CLEAR_IMAGE_FNAME=clear-xxxxx-kvm.img.xz
-	if [ $1X != "X" ]; then
+	if [ "$1X" != "X" ]; then
 		CLEAR_IMAGE_FNAME=clear-${ACRN_CLEAR_OS_VERSION}-kvm.img.xz
 		IMAGE_BASE=${ACRN_CLEAR_URL}/releases/$1/clear/
 	else
@@ -53,7 +53,7 @@ function get_url()
 		    grep -Pioe "<a +href *= *\"?clear-[0-9]*-kvm.img.xz[^\-].*?</a>" | \
 		    grep -Pioe \"clear-[0-9]*-kvm.img.xz\"`
 		CLEAR_IMAGE_FNAME=`echo ${HREF} | sed 's/\"//g'`
-		[ -z ${CLEAR_IMAGE_FNAME} ] && \
+		[ -z "${CLEAR_IMAGE_FNAME}" ] && \
 		       	{ echo "Failed to get ClearLinux image URL"; exit 1; }
 	fi;
 
@@ -119,12 +119,15 @@ function build_docker_image()
 		"pip3 install --timeout=180 ${src_args} kconfiglib" \
 		|| { guestunmount ${mnt_pt}; exit -1; }
 
+	docker exec ${ACRN_DOCKER_NAME} sh -c "mkdir ${ACRN_MNT_VOL}/firmware" || exit 1;
 	for pkg in `ls linux-firmware-*`; do
-	   docker exec ${ACRN_DOCKER_NAME} ${ACRN_MNT_VOL}/10-unpack-rpm.sh "${ACRN_MNT_VOL}/${pkg}" "/"
+	   docker exec ${ACRN_DOCKER_NAME} sh -c \
+		   "${ACRN_MNT_VOL}/10-unpack-rpm.sh ${ACRN_MNT_VOL}/${pkg} ${ACRN_MNT_VOL}/firmware" || exit 1;
 	done;
+	docker exec ${ACRN_DOCKER_NAME} sh -c "cp -fr ${ACRN_MNT_VOL}/firmware/* /"  || exit 1;
 
-	docker exec ${ACRN_DOCKER_NAME} sh -c "git config --global user.name ${ACRN_GIT_USER_NAME}"
-	docker exec ${ACRN_DOCKER_NAME} sh -c "git config --global user.email ${ACRN_GIT_USER_EMAIL}"
+	docker exec ${ACRN_DOCKER_NAME} sh -c "git config --global user.name ${ACRN_GIT_USER_NAME}" || exit 1;
+	docker exec ${ACRN_DOCKER_NAME} sh -c "git config --global user.email ${ACRN_GIT_USER_EMAIL}" || exit 1;
 
 	docker stop ${ACRN_DOCKER_NAME}
 	docker commit ${ACRN_DOCKER_NAME} ${ACRN_DOCKER_IMAGE}:$1

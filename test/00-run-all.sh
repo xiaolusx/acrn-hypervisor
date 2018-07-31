@@ -39,8 +39,8 @@ export ACRN_CLEAR_OS_VERSION=""
 # clone acrn code, build disk image(20GB). Make sure that it has enough space.
 # The script will create the dir if it doens't exsit. Change layout as you like.
 #
-# export ACRN_HOST_DIR=/work/vdisk
-export ACRN_HOST_DIR=/home/${USER}/vdisk
+export ACRN_HOST_DIR=/work/vdisk
+# export ACRN_HOST_DIR=/home/${USER}/vdisk
 
 # Mounting point in docker for ACRN_HOST_DIR. Needn't touch it
 export ACRN_MNT_VOL=/acrn-vol
