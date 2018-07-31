@@ -85,21 +85,13 @@ wget_or_gitclone_kernel() {
 	git init . && git add * && git commit -a -m "linux stable kernel ${SOS_DIR}"
 	[ $? -ne 0 ] && { echo "Failed to init git by ${KERNEL_XZ}"; exit 1; }
 	cd ..
+
+        cp ../linux-pk414/config-pk414-sos  .config || 
+		{ echo "Failed to copy SOS kconfig from clear-pk414 git"; exit 1; }
+
 	return 0
 }
 
-
-# patch stable kernel with ACRN sos patch set
-apply_patches() {
-        cd ${SOS_DIR} || return 1
-        for i in `ls ../linux-pk414/*.patch`; do patch -p1 <$i; done;
-        if [ $? -eq 0 ]; then
-                echo "Completed patching !"
-        else
-                echo "Failed to apply patches or already patched ???"
-        fi;
-        cp ../linux-pk414/config-pk414-sos  .config
-}
 
 # clone pkt414 kenrel, which hosts the SOS kernel patches. If it exists,
 # we don't update it (git pull), instead assume that you want to use the
