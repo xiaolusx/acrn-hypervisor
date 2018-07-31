@@ -18,22 +18,50 @@ NOTE:
   The scripts in this directory are to create a disk image to run acrn
 hypervisor and service OS; and/or individual binary/tarball for SOS/ESP,
 etc. It pulls opensourced code from github.com, projectacrn and clearlinux
-pk414 git, build the code, and then create a disk image, and also extract
-the SOS rootfs and UEFI ESP partition into individual tarball. Choose what
-you want.
+pk414 git, build the code, and create a disk image. Since the image is few
+gigabyte, it takes time to "dd" it to disk/USB, the script also extracts
+ESP partition and SOS rootfs parition as respective tarball. so developers
+can just copy the ESP and SOS_rootfs to corresponding partition, instead of
+"dd" the whole image to disk.
 
-  Just run the first script (0-run-all.sh) to get an image, which can
-be used in qemu/ovmf or simics. The image also can be "dd" to USB disk
-or hard disk to demo ACRN. Currently, final disk image doesn't include
-UOS. You can manually copy the rootfs of UOS into the 4rd partition of
-the image. 
+  Run the first script (0-run-all.sh) to get an image, which can be used
+also in qemu/ovmf or simics. Currently, the final disk image doesn't include
+UOS. You can manually copy the rootfs of UOS into the 4rd partition of the
+image. 
 
-   By default, it creates:
-       1. disk image:   ${ACRN_HOST_DIR}/${ACRN_DISK_IMAGE}
-       2. sos rootfs:   ${ACRN_HOST_DIR}/out/sos_rootfs.tgz
-       3. EFI ESP partition: ${ACRN_HOST_DIR}/out/esp_partition.tgz
-       4. out/{acrn.conf, acrn.efi, loader.conf,  vmlinuz-4.14.xx-acrn}
+   After the scripts execution, the build results are in 
+
+     # cd ${ACRN_HOST_DIR}
+     # ls -lh out/
+    
+total 1.5G
+-rwxr-xr-x 1 minskey minskey  251 Jul 30 18:31 acrn.conf
+-rwxr-xr-x 1 minskey minskey 292K Jul 30 18:31 acrn.efi
+-rwxrwxrwx 1 minskey minskey    4.9G Jul 31 08:13 acrn_vdisk_clear24030.img
+-rw-r--r-- 1 minskey minskey  13M Jul 30 18:31 esp_partition.tgz
+-rwxr-xr-x 1 minskey minskey   31 Jul 30 18:31 loader.conf
+-rw-r--r-- 1 minskey minskey 319M Jul 30 18:31 sos_rootfs.tgz
+-rwxr-xr-x 1 minskey minskey 7.8M Jul 30 18:31 vmlinuz-4.14.57-acrn
+
+   a)  acrn_vdisk_clear24030.img  -- disk image
+       
+   b)  sos_rootfs.tgz  -- rootfs for SOS
+       esp_partition.tgz (including acrn.efi, acrn.conf. loader.conf vmlinuz-4.14.xx-acrn)
+       
+   c)  acrn.conf
+       acrn.efi
+       loader.conf
+       vmlinuz-4.14.xx-acrn
+
+So, you have 3 options,
+
+    1. dd acrn_vdisk_clear24030.img to USB or hardisk to run;
+    2. create EFI partitioned a disk, and then untar esp_partition.tgz to ESP, 
+       untar sos_rootfs.tgz to a partition for SOS root;
+    3. create yourself ESP boot paritition, and copy files listed in C) ;
+
 +++ NOTE: Double check the "root=PARTUUID" in acrn.conf for SOS root partition +++
+
 
    In most cases, you just need to modify one or two environment variables
 defined at the beginning of the script 00-run-all.sh

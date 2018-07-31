@@ -194,6 +194,8 @@ docker exec ${ACRN_DOCKER_NAME} chmod 777 ${ACRN_MNT_VOL}/${ACRN_UEFI_FW}
 docker exec ${ACRN_DOCKER_NAME} chmod 777 "${ACRN_MNT_VOL}/${ACRN_DISK_IMAGE}*"
 docker exec ${ACRN_DOCKER_NAME} chmod 777 ${ACRN_MNT_VOL}/${ACRN_ENV_VARS}
 
+docker exec ${ACRN_DOCKER_NAME} sh -c "${ACRN_MNT_VOL}/${ACRN_DISK_IMAGE}* ${ACRN_MNT_VOL}/out/"
+
 docker stop  ${ACRN_DOCKER_NAME}
 
 # Comment this if you want to keep the docker as a build environment
