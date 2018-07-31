@@ -125,7 +125,8 @@ if [ ! `pwd` = ${ACRN_HOST_DIR} ]; then
 	cp -af *.sh ${ACRN_HOST_DIR} ||
 	    { echo "check if the dir ${ACRN_HOST_DIR} is writable for \"${USER}\"";
 	    exit 1; }
-	[ -n ${ACRN_UOS_VSBL} ] && [ ${ACRN_UOS_VSBL} -eq 1 ] && cp uos-boot-realmode.patch ${ACRN_HOST_DIR}/
+	[ -z ${ACRN_UOS_VSBL} ] || 
+		[ ${ACRN_UOS_VSBL} -eq 1 ] && cp uos-boot-realmode.patch ${ACRN_HOST_DIR}/
 fi;
 
 cd ${ACRN_HOST_DIR}/
@@ -190,7 +191,7 @@ docker exec ${ACRN_DOCKER_NAME} ${ACRN_MNT_VOL}/09-download-ovmf.sh 2>&1 \
 
 # change ownership
 docker exec ${ACRN_DOCKER_NAME} chmod 777 ${ACRN_MNT_VOL}/${ACRN_UEFI_FW}
-docker exec ${ACRN_DOCKER_NAME} chmod 777 ${ACRN_MNT_VOL}/${ACRN_DISK_IMAGE}
+docker exec ${ACRN_DOCKER_NAME} chmod 777 "${ACRN_MNT_VOL}/${ACRN_DISK_IMAGE}*"
 docker exec ${ACRN_DOCKER_NAME} chmod 777 ${ACRN_MNT_VOL}/${ACRN_ENV_VARS}
 
 docker stop  ${ACRN_DOCKER_NAME}
