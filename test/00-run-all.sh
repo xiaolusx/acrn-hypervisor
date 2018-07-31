@@ -125,7 +125,7 @@ if [ ! `pwd` = ${ACRN_HOST_DIR} ]; then
 	cp -af *.sh ${ACRN_HOST_DIR} ||
 	    { echo "check if the dir ${ACRN_HOST_DIR} is writable for \"${USER}\"";
 	    exit 1; }
-	[ -z ${ACRN_UOS_VSBL} ] || 
+	[ -z ${ACRN_UOS_VSBL} ] ||
 		[ ${ACRN_UOS_VSBL} -eq 1 ] && cp uos-boot-realmode.patch ${ACRN_HOST_DIR}/
 fi;
 
@@ -193,9 +193,7 @@ docker exec ${ACRN_DOCKER_NAME} ${ACRN_MNT_VOL}/09-download-ovmf.sh 2>&1 \
 docker exec ${ACRN_DOCKER_NAME} chmod 777 ${ACRN_MNT_VOL}/${ACRN_UEFI_FW}
 docker exec ${ACRN_DOCKER_NAME} chmod 777 "${ACRN_MNT_VOL}/${ACRN_DISK_IMAGE}*"
 docker exec ${ACRN_DOCKER_NAME} chmod 777 ${ACRN_MNT_VOL}/${ACRN_ENV_VARS}
-
-docker exec ${ACRN_DOCKER_NAME} sh -c "${ACRN_MNT_VOL}/${ACRN_DISK_IMAGE}* ${ACRN_MNT_VOL}/out/"
-
+docker exec ${ACRN_DOCKER_NAME} sh -c "mv ${ACRN_MNT_VOL}/${ACRN_DISK_IMAGE}* ${ACRN_MNT_VOL}/out/"
 docker stop  ${ACRN_DOCKER_NAME}
 
 # Comment this if you want to keep the docker as a build environment

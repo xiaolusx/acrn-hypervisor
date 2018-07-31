@@ -124,10 +124,25 @@ BZ_DIR=`dirname ${BZ_FPATH}`
 
 let idx=`expr index ${BZ_NAME} "-"` 
 MODS_NAME=${BZ_NAME:${idx}}
+let len=`echo $MODS_NAME | wc -L`
 
-MODS_FPATH=${BZ_DIR}/"lib/modules/"${MODS_NAME}
-[ ! -d ${MODS_FPATH} ] && [ -d "${MODS_FPATH}+" ] && MODS_FPATH="${MODS_FPATH}+";
-[ ! -d ${MODS_FPATH} ] && { echo "Failed to get linux modules: "${MODS_FPATH}; exit 1; }
+MODS_FPATH=${BZ_DIR}/"lib/modules/"
+
+if false; then
+let found=0
+for dir in `ls ${MODS_FPATH}`; do
+	echo "dir=${dir}"
+	echo "mods_name=${MODS_NAME}"
+	echo "sub_str: ${dir:0:$len}"
+
+        if [ "${dir}" == "${MODS_NAME}"* ]; then
+		echo "equal"
+	       	found=1
+	fi;
+	echo ${found}
+done;
+[ ${found} -eq 0 ] && { echo "Failed to get linux modules: "${MODS_FPATH}; exit 1; }
+fi;
 
 # download Clearlinux KVM image if not exits
 download_image ${URL_BASE}
@@ -173,7 +188,7 @@ cp ${PATH_HV_OUT}/hypervisor/acrn.efi ./img_p1/EFI/BOOT/BOOTX64.EFI
 
 cp ${BZ_FPATH} ./img_p1/EFI/org.clearlinux/
 
-cp -R ${MODS_FPATH} ./img_p3/lib/modules/
+cp -R ${MODS_FPATH}/*  ./img_p3/lib/modules/
 
 cp ${PATH_HV_OUT}/devicemodel/acrn-dm  ./img_p3/usr/bin/
 cp -r ${PATH_HV_OUT}/tools/*  ./img_p3/usr/bin/
