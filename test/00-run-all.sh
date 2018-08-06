@@ -25,7 +25,7 @@
 
 # set this if UOS boots from realmode on virtual SBL; don't set it if UOS boot
 # from protected mode.
-# export ACRN_UOS_VSBL=1
+export ACRN_UOS_VSBL=1
 
 # The release# of clearlinux in /usr/lib/os-release: like 23140, we will pull
 # a KVM image from http://clearlinux.org and use it as base image for docker.
@@ -82,8 +82,8 @@ if [ ${ACRN_I_AM_IN_CHINA} -eq 1 ]; then
  # and then, modify this macro to your local git.  For exmaple, we git clone
  # it to home dir, and then, modify this macro to: /home/$USER/linux-stable.
  #
- #   export ACRN_LINUX_STABLE_GIT=${ACRN_MNT_VOL}/linux-stable
-    export ACRN_LINUX_STABLE_GIT=https://mirrors.tuna.tsinghua.edu.cn/git/linux-stable.git
+    export ACRN_LINUX_STABLE_GIT=${ACRN_MNT_VOL}/linux-stable
+  #  export ACRN_LINUX_STABLE_GIT=https://mirrors.tuna.tsinghua.edu.cn/git/linux-stable.git
      export ACRN_PIP_SOURCE=https://pypi.tuna.tsinghua.edu.cn/simple  # https is required
 
 else
@@ -126,7 +126,7 @@ if [ ! `pwd` = ${ACRN_HOST_DIR} ]; then
 	    { echo "check if the dir ${ACRN_HOST_DIR} is writable for \"${USER}\"";
 	    exit 1; }
 	[ -z ${ACRN_UOS_VSBL} ] ||
-		[ ${ACRN_UOS_VSBL} -eq 1 ] && cp uos-boot-realmode.patch ${ACRN_HOST_DIR}/
+		[ ${ACRN_UOS_VSBL} -eq 1 ] && cp *.patch ${ACRN_HOST_DIR}/
 fi;
 
 cd ${ACRN_HOST_DIR}/
@@ -194,6 +194,7 @@ docker exec ${ACRN_DOCKER_NAME} chmod 777 ${ACRN_MNT_VOL}/${ACRN_UEFI_FW}
 docker exec ${ACRN_DOCKER_NAME} chmod 777 "${ACRN_MNT_VOL}/${ACRN_DISK_IMAGE}*"
 docker exec ${ACRN_DOCKER_NAME} chmod 777 ${ACRN_MNT_VOL}/${ACRN_ENV_VARS}
 docker exec ${ACRN_DOCKER_NAME} sh -c "mv ${ACRN_MNT_VOL}/${ACRN_DISK_IMAGE}* ${ACRN_MNT_VOL}/out/"
+docker exec ${ACRN_DOCKER_NAME} sh -c "chown ${ACRN_MNT_VOL}/out/${ACRN_DISK_IMAGE}*"
 docker stop  ${ACRN_DOCKER_NAME}
 
 # Comment this if you want to keep the docker as a build environment

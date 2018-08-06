@@ -96,12 +96,14 @@ function build_docker_image()
 
 	docker start ${ACRN_DOCKER_NAME}
 #	docker exec ${ACRN_DOCKER_NAME} sh -c "mkdir -p /etc/ssl/certs/"
-#	docker exec ${ACRN_DOCKER_NAME} sh -c "cp ${ACRN_MNT_VOL}/${PEM_SUPD} /etc/ssl/certs/"
-#	docker exec ${ACRN_DOCKER_NAME} sh -c "cp ${ACRN_MNT_VOL}/${PEM_CLEAR} /etc/ssl/certs/"
+	docker exec ${ACRN_DOCKER_NAME} sh -c \
+		"cp ${ACRN_MNT_VOL}/${PEM_SUPD} /usr/share/clar/update-ca/ && \
+		cp ${ACRN_MNT_VOL}/${PEM_CLEAR} /usr/share/clar/update-ca/" || \
+		{ skip_cert="-n"; echo "Failed to copy PEM certs into clearlinux"; }
 
 #	docker exec ${ACRN_DOCKER_NAME} swupd update
 	echo -n "swupd bundle-add start @"; date
-	docker exec ${ACRN_DOCKER_NAME} sh -c "swupd bundle-add -n \
+	docker exec ${ACRN_DOCKER_NAME} sh -c "swupd bundle-add $skip_cert \
 		--skip-diskspace-check \
 		c-basic storage-utils-dev  dev-utils-dev user-basic-dev > /dev/null" \
 		|| { guestunmount ${mnt_pt}; exit -1; }

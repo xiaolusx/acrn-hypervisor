@@ -1,0 +1,32 @@
+From e37dadd971a45cbd4d12800ada8e2522f809acfd Mon Sep 17 00:00:00 2001
+From: Chaohong guo <chaohong.guo@intel.com>
+Date: Mon, 6 Aug 2018 13:54:33 +0800
+Subject: [PATCH 1/2] workaround for i7/KBL patch for GVTg from Jiang fei
+
+the patch is a workaround by Jiang Fei. since i7/kbl uses differnt
+connector and plane for GVT, and it cannot work with the acrn repo.
+Jiang fei cooked this patch.
+---
+ drivers/gpu/drm/i915/gvt/acrn-gvt.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/gpu/drm/i915/gvt/acrn-gvt.c b/drivers/gpu/drm/i915/gvt/acrn-gvt.c
+index 96f507069270..1d629f8679ca 100644
+--- a/drivers/gpu/drm/i915/gvt/acrn-gvt.c
++++ b/drivers/gpu/drm/i915/gvt/acrn-gvt.c
+@@ -406,6 +406,12 @@ static int acrngt_sysfs_add_instance(struct acrngt_hvm_params *vp)
+ 
+ 	struct intel_vgpu_type type = acrngt_priv.gvt->types[0];
+ 
++	/* todo: wa patch due to plane restriction patches are not porting */
++	acrngt_priv.gvt->pipe_info[1].plane_owner[0] = 1;
++	acrngt_priv.gvt->pipe_info[1].plane_owner[1] = 1;
++	acrngt_priv.gvt->pipe_info[1].plane_owner[2] = 1;
++	acrngt_priv.gvt->pipe_info[1].plane_owner[3] = 1;
++
+ 	type.low_gm_size = vp->aperture_sz * VMEM_1MB;
+ 	type.high_gm_size = (vp->gm_sz - vp->aperture_sz) * VMEM_1MB;
+ 	type.fence = vp->fence_sz;
+-- 
+2.17.1
+

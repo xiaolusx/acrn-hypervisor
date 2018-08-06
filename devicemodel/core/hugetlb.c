@@ -329,7 +329,7 @@ static int create_hugetlb_dirs(int level)
 	len = strlen(tmp_path);
 	for (i = 1; i < len; i++) {
 		if (tmp_path[i] == '/') {
-			tmp_path[i] = 0;
+			tmp_path[i] = '\0';
 			if (access(tmp_path, F_OK) != 0) {
 				if (mkdir(tmp_path, 0755) < 0) {
 					perror("mkdir failed");

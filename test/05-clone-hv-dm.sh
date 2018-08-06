@@ -30,7 +30,7 @@ if [ ! -d ${ACRN_HV_DIR} ]; then
 
 	if [ ! -z ${ACRN_UOS_VSBL} ] && [ ${ACRN_UOS_VSBL} -eq 1 ]; then
 		cd ${ACRN_HV_DIR};
-		for i in `ls ../*.patch`; do
+		for i in `ls ../hv*.patch`; do
 			echo "Patch ${i} to acrn-hypervisor";
 			git am  $i; 
 		       [ $? -ne 0 ] && { echo "Failed to apply $i to hypervisor"; exit 1; }
