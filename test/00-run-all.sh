@@ -196,7 +196,7 @@ docker exec ${ACRN_DOCKER_NAME} chmod 777 "${ACRN_MNT_VOL}/${ACRN_DISK_IMAGE}*"
 docker exec ${ACRN_DOCKER_NAME} chmod 777 ${ACRN_MNT_VOL}/${ACRN_ENV_VARS}
 docker exec ${ACRN_DOCKER_NAME} sh -c "mv ${ACRN_MNT_VOL}/${ACRN_DISK_IMAGE}* ${ACRN_MNT_VOL}/out/"
 docker exec ${ACRN_DOCKER_NAME} sh -c "chown ${ACRN_MNT_VOL}/out/${ACRN_DISK_IMAGE}*"
-docker exec ${ACRN_DOCKER_NAME} sh -c "mv ${ACRN_MNT_VOL}/out/${ACRN_UEFI_FW} ${ACRN_MNT_VOL}/out/"
+docker exec ${ACRN_DOCKER_NAME} sh -c "mv ${ACRN_MNT_VOL}/${ACRN_UEFI_FW} ${ACRN_MNT_VOL}/out/"
 
 docker stop  ${ACRN_DOCKER_NAME}
 
