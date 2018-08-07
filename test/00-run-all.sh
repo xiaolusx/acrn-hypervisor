@@ -23,9 +23,6 @@
 [ $# -ne 0 ] && LOG_FILE=$1 || LOG_FILE=log.txt
 
 
-# set this if UOS boots from realmode on virtual SBL; don't set it if UOS boot
-# from protected mode.
-export ACRN_UOS_VSBL=1
 
 # The release# of clearlinux in /usr/lib/os-release: like 23140, we will pull
 # a KVM image from http://clearlinux.org and use it as base image for docker.
@@ -39,8 +36,8 @@ export ACRN_CLEAR_OS_VERSION=""
 # clone acrn code, build disk image(20GB). Make sure that it has enough space.
 # The script will create the dir if it doens't exsit. Change layout as you like.
 #
-export ACRN_HOST_DIR=/work/vdisk
-# export ACRN_HOST_DIR=/home/${USER}/vdisk
+# export ACRN_HOST_DIR=/work/vdisk
+export ACRN_HOST_DIR=/home/${USER}/vdisk
 
 # Mounting point in docker for ACRN_HOST_DIR. Needn't touch it
 export ACRN_MNT_VOL=/acrn-vol
@@ -82,8 +79,8 @@ if [ ${ACRN_I_AM_IN_CHINA} -eq 1 ]; then
  # and then, modify this macro to your local git.  For exmaple, we git clone
  # it to home dir, and then, modify this macro to: /home/$USER/linux-stable.
  #
-    export ACRN_LINUX_STABLE_GIT=${ACRN_MNT_VOL}/linux-stable
-  #  export ACRN_LINUX_STABLE_GIT=https://mirrors.tuna.tsinghua.edu.cn/git/linux-stable.git
+   # export ACRN_LINUX_STABLE_GIT=${ACRN_MNT_VOL}/linux-stable
+    export ACRN_LINUX_STABLE_GIT=https://mirrors.tuna.tsinghua.edu.cn/git/linux-stable.git
      export ACRN_PIP_SOURCE=https://pypi.tuna.tsinghua.edu.cn/simple  # https is required
 
 else
@@ -98,6 +95,10 @@ fi;
 # set "ACRN_TRACE_SHELL_ENABLE" to tell all scripts to "set -x". unset it if
 # you don't want to trace shell commands.
 # export ACRN_TRACE_SHELL=1
+
+# set this if UOS boots from realmode on virtual SBL; don't set it if UOS boot
+# from protected mode.
+export ACRN_UOS_VSBL=1
 
 # Download Clearlinux OS image by the URL. Don't change it unless u know the
 # URL is changed
@@ -195,6 +196,8 @@ docker exec ${ACRN_DOCKER_NAME} chmod 777 "${ACRN_MNT_VOL}/${ACRN_DISK_IMAGE}*"
 docker exec ${ACRN_DOCKER_NAME} chmod 777 ${ACRN_MNT_VOL}/${ACRN_ENV_VARS}
 docker exec ${ACRN_DOCKER_NAME} sh -c "mv ${ACRN_MNT_VOL}/${ACRN_DISK_IMAGE}* ${ACRN_MNT_VOL}/out/"
 docker exec ${ACRN_DOCKER_NAME} sh -c "chown ${ACRN_MNT_VOL}/out/${ACRN_DISK_IMAGE}*"
+docker exec ${ACRN_DOCKER_NAME} sh -c "mv ${ACRN_MNT_VOL}/out/${ACRN_UEFI_FW} ${ACRN_MNT_VOL}/out/"
+
 docker stop  ${ACRN_DOCKER_NAME}
 
 # Comment this if you want to keep the docker as a build environment
@@ -212,5 +215,5 @@ echo "If failed, trying manually starting qemu by: qemu-system-x86_64 -bios " \
 	${ACRN_HOST_DIR}/${ACRN_UEFI_FW} \
 	-hda "${ACRN_HOST_DIR}/${ACRN_DISK_IMAGE}"
 
-qemu-system-x86_64 -bios ${ACRN_HOST_DIR}/${ACRN_UEFI_FW} -hda ${ACRN_HOST_DIR}/${ACRN_DISK_IMAGE} -m 4G -cpu Broadwell -smp cpus=4,cores=4,threads=1 -serial stdio
+qemu-system-x86_64 -bios ${ACRN_HOST_DIR}/out/${ACRN_UEFI_FW} -hda ${ACRN_HOST_DIR}/out/${ACRN_DISK_IMAGE} -m 4G -cpu Broadwell -smp cpus=4,cores=4,threads=1 -serial stdio
 
