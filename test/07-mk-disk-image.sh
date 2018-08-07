@@ -224,7 +224,7 @@ EOF
 cat <<EOF>./img_p1/loader/entries/acrn.conf
 title "ACRN Hypervisor"
 linux  /EFI/org.clearlinux/${BZ_NAME}
-options  maxcpus=1 console=tty0 console=ttyS0 root=PARTUUID=${UUID_ROOT} rw \
+options  console=tty0 console=ttyS0 root=PARTUUID=${UUID_ROOT} rw \
 rootwait ignore_loglevel no_timer_check consoleblank=0 \
 cma=2560M@0x100000000-0
 EOF
