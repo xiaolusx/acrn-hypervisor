@@ -185,17 +185,19 @@ docker exec ${ACRN_DOCKER_NAME} ${ACRN_MNT_VOL}/07-mk-disk-image.sh  2>&1 \
 ./08-extract-rootfs.sh  2>&1 | tee -a ${LOG_FILE}
 [ $? -ne 0 ] && { echo "failed to extract rootfs from acrn disk image"; exit; }
 
+# move acrn disk image into "out" dir
+docker exec ${ACRN_DOCKER_NAME} chmod 777 "${ACRN_MNT_VOL}/${ACRN_DISK_IMAGE}*"
+docker exec ${ACRN_DOCKER_NAME} sh -c "chown ${ACRN_MNT_VOL}/out/${ACRN_DISK_IMAGE}*"
+docker exec ${ACRN_DOCKER_NAME} sh -c "mv ${ACRN_MNT_VOL}/${ACRN_DISK_IMAGE}* ${ACRN_MNT_VOL}/out/"
+
 # download OVMF efi firmware
 { echo -n "==== Runing script 09-download-ovmf.sh  ====@ "; date; } >> ${LOG_FILE}
 docker exec ${ACRN_DOCKER_NAME} ${ACRN_MNT_VOL}/09-download-ovmf.sh 2>&1 \
 	| tee -a ${LOG_FILE}
 
 # change ownership
-docker exec ${ACRN_DOCKER_NAME} chmod 777 ${ACRN_MNT_VOL}/${ACRN_UEFI_FW}
-docker exec ${ACRN_DOCKER_NAME} chmod 777 "${ACRN_MNT_VOL}/${ACRN_DISK_IMAGE}*"
 docker exec ${ACRN_DOCKER_NAME} chmod 777 ${ACRN_MNT_VOL}/${ACRN_ENV_VARS}
-docker exec ${ACRN_DOCKER_NAME} sh -c "mv ${ACRN_MNT_VOL}/${ACRN_DISK_IMAGE}* ${ACRN_MNT_VOL}/out/"
-docker exec ${ACRN_DOCKER_NAME} sh -c "chown ${ACRN_MNT_VOL}/out/${ACRN_DISK_IMAGE}*"
+docker exec ${ACRN_DOCKER_NAME} chmod 777 ${ACRN_MNT_VOL}/${ACRN_UEFI_FW}
 docker exec ${ACRN_DOCKER_NAME} sh -c "mv ${ACRN_MNT_VOL}/${ACRN_UEFI_FW} ${ACRN_MNT_VOL}/out/"
 
 docker stop  ${ACRN_DOCKER_NAME}
