@@ -216,6 +216,12 @@ cat <<EOF>./img_p3/etc/passwd
 root::0:0:root:/root:/bin/bash
 EOF
 
+# permit root ssh without password
+cat <<EOF>./img_p3/etc/ssh/sshd_config
+PermitRootLogin yes
+PermitEmptyPasswords yes
+EOF
+
 # create loader.conf
 cat <<EOF>./img_p1/loader/loader.conf
 default acrn
