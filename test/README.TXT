@@ -139,3 +139,12 @@ QA
  2. For whatever reason, it is slow for guys in China to download some of those
     code from www.kernel.org, pip source, etc. Please use the mirror you know it
     is fast for you. Currently, we choose the Mirror from Tsinghua University.
+
+ 3. if you want to install some packages in the SOS rootfs, instead of whole
+    bundle, you can go to:
+
+      https://download.clearlinux.org/releases/24330/clear/x86_64/os/Packages/,
+
+    here, 24330 is the verion ID of clearlinux, or "current", and check which
+    rpm packages you want to install,  and then put the name of packages into
+    the array extra_rpm_package[] in script-07.

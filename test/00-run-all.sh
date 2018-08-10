@@ -28,7 +28,7 @@
 # a KVM image from http://clearlinux.org and use it as base image for docker.
 # By default, the latest KVM image by parsing the web page:
 #               https://cdn.download.clearlinux.org/current/
-# export ACRN_CLEAR_OS_VERSION=23940
+# export ACRN_CLEAR_OS_VERSION=24120
 export ACRN_CLEAR_OS_VERSION=""
 
 # The folder will be mounted into docker as volume in docker's word, to the

@@ -121,7 +121,7 @@ function build_docker_image()
 		"pip3 install --timeout=180 ${src_args} kconfiglib" \
 		|| { guestunmount ${mnt_pt}; exit -1; }
 
-	docker exec ${ACRN_DOCKER_NAME} sh -c "mkdir ${ACRN_MNT_VOL}/firmware" || exit 1;
+	docker exec ${ACRN_DOCKER_NAME} sh -c "mkdir -p ${ACRN_MNT_VOL}/firmware" || exit 1;
 	for pkg in `ls linux-firmware-*`; do
 	   docker exec ${ACRN_DOCKER_NAME} sh -c \
 		   "${ACRN_MNT_VOL}/10-unpack-rpm.sh ${ACRN_MNT_VOL}/${pkg} ${ACRN_MNT_VOL}/firmware" || exit 1;
@@ -143,8 +143,12 @@ function build_docker_image()
 function download_firmware() {
 	local URL="https://download.clearlinux.org/releases/$1/clear/x86_64/os/Packages/"
 
+	export ACRN_CLEAR_RPM_PAGE="clear_package_$$.html"
+	export ACRN_CLEAR_RPM_URL=${URL}
+        curl -sSL ${URL} -o ${ACRN_CLEAR_RPM_PAGE} || { echo "Failed to get page: $URL"; exit 1; }
+
 	echo -n "begin to download firmware from clearlinux-"$1 "@"; date;
-        for pkg in `curl -sSL ${URL} | grep -Pioe "<a href=\"linux-firmware-.*\.rpm\">" \
+        for pkg in `cat ${ACRN_CLEAR_RPM_PAGE} | grep -Pioe "<a href=\"linux-firmware-.*\.rpm\">" \
 		| grep -Pioe linux-firmware-.*\.rpm`;  do
 		[ -f ${pkg} ] && { echo "${pkg} exists in current dir"; continue; }
 		echo "downloading ${URL}/$pkg"
@@ -155,7 +159,7 @@ function download_firmware() {
 
 [ -z ${ACRN_TRACE_SHELL_ENABLE} ] || set -x
 
-# Create the dir if doesn't exsit
+# Create the dir if does not exsit
 mkdir -p ${ACRN_HOST_DIR}
 
 name_conflict

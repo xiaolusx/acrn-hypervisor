@@ -11,6 +11,7 @@ cd ${ACRN_MNT_VOL} || { echo "Failed to cd "${ACRN_MNT_VOL}; exit -1; }
 [ -z ${ACRN_HV_DIR} ] && ACRN_HV_DIR=acrn-hypervisor
 
 [ -z ${ACRN_TRACE_SHELL_ENABLE} ] || set -x
+
 #
 # $1 -- the dir where SOS vmlinuz and modules are (set INSTALL_PATH  and
 #       INSTALL_MOD_PATH to the dir when building Linux kernel)
@@ -34,6 +35,12 @@ else
 		${LAUNCH_UOS_SCRIPT}
 	echo "Make sure the dirs are rigth"
 fi;
+
+
+# A list of the prefix of rpm package name. ClearLinux KVM image doesn't
+# install those packages, so we install them by ourselves
+extra_rpm_package=("e2fsprogs-extras-" "dosfstools-bin-")
+
 
 
 # the name fo disk image which will be created at last. used to boot
@@ -216,7 +223,9 @@ cat <<EOF>./img_p3/etc/passwd
 root::0:0:root:/root:/bin/bash
 EOF
 
+
 # permit root ssh without password
+mkdir -p ./img_p3/etc/ssh/
 cat <<EOF>./img_p3/etc/ssh/sshd_config
 PermitRootLogin yes
 PermitEmptyPasswords yes
@@ -236,6 +245,18 @@ options  console=tty0 console=ttyS0 root=PARTUUID=${UUID_ROOT} rw \
 rootwait ignore_loglevel no_timer_check consoleblank=0 \
 cma=2560M@0x100000000-0
 EOF
+
+for prefix in  ${extra_rpm_package}; do
+	for pkg in  `grep -Pioe "<a href=\"$prefix.*\.rpm\">" ${ACRN_CLEAR_RPM_PAGE} \
+                | grep -Pioe $prefix.*\.rpm`; do
+
+                [ -f ${pkg} ] && { echo "${pkg} exists in current dir"; continue; }
+                echo "downloading ${ACRN_CLEAR_RPM_URL}/$pkg"
+                wget -qcL ${ACRN_CLEAR_RPM_URL}/$pkg || { echo "Failed to download $pkg"; exit 1; }
+		./10-unpack-rpm.sh $pkg ./img_p3
+        done;
+done;
+
 
 sync;
 
