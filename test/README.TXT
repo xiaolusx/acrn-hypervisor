@@ -129,6 +129,16 @@ About the scripts
        ultility to unpack/install a RPM package for clearlinux doesn't use RPM
 
 
+
+For developers who want to patch HV or SOS
+===========================================
+   Currently, Hypervisor and device model is in the same git repository, and
+SOS (Linux kernel) is managed as an individual repository. If you want to patch
+hypervisor or device model, you can "git format" the patches, add the prefix
+"hv-" to the patch file, and then put the patches into the same folder as the
+shell scripts.   For Linux kernel (SOS) patches, add prefix "sos-".
+
+
 QA
 ---
  1. Occasionally, an error message will be printed by curl, like,
