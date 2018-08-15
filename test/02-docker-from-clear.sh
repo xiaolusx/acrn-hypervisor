@@ -143,6 +143,8 @@ function build_docker_image()
 function download_firmware() {
 	local URL="https://download.clearlinux.org/releases/$1/clear/x86_64/os/Packages/"
 
+	echo "Download the page: ${URL} ..."
+
 	export ACRN_CLEAR_RPM_PAGE="clear_package_$$.html"
 	export ACRN_CLEAR_RPM_URL=${URL}
         curl -sSL ${URL} -o ${ACRN_CLEAR_RPM_PAGE} || { echo "Failed to get page: $URL"; exit 1; }

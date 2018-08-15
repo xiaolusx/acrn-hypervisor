@@ -27,17 +27,34 @@ if [ ! -d ${ACRN_HV_DIR} ]; then
 		{ echo "Failed to git-clone ${URL_ACRN}${ACRN_HV_DIR}"; exit 1; }
 
         echo "Completed git-clone ACRN hypervisor and device model"
-
-	if [ ! -z ${ACRN_UOS_VSBL} ] && [ ${ACRN_UOS_VSBL} -eq 1 ]; then
-		cd ${ACRN_HV_DIR};
-		for i in `ls ../hv*.patch`; do
-			echo "Patch ${i} to acrn-hypervisor";
-			git am  $i; 
-		       [ $? -ne 0 ] && { echo "Failed to apply $i to hypervisor"; exit 1; }
-		done;
-	fi;
-
 fi;
+
+cd ${ACRN_HV_DIR};
+
+# create a test branch
+if [ -z "${ACRN_HV_COMMIT}" ] || [ "${ACRN_HV_COMMIT}X" == "X" ]; then
+	ACRN_HV_COMMIT=`git rev-parse HEAD`
+fi;
+
+BRANCH="commit_${ACRN_HV_COMMIT}"
+ret=`git branch | grep "${BRANCH}"`
+
+if [ ! "${ret}" == "${BRANCH}" ]; then
+	git branch ${BRANCH} ${ACRN_HV_COMMIT} || \
+	    { echo "Failed to create branch: ${BRANCH}"; exit 1; }
+
+	git checkout ${BRANCH} || \
+		{ echo "Failed to git checkout branch: ${BRANCH}"; exit 1; }
+
+	for i in `ls ../hv*.patch`; do
+		echo "Patch ${i} to acrn-hypervisor";
+		git am  $i; 
+	       [ $? -ne 0 ] && { echo "Failed to apply $i to hypervisor"; exit 1; }
+	done;
+fi;
+
+git checkout ${BRANCH} || \
+	{ echo "Failed to git checkout branch: ${BRANCH}"; exit 1; }
 
 export ACRN_HV_DIR=${ACRN_HV_DIR}
 

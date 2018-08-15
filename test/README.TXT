@@ -158,3 +158,17 @@ QA
     here, 24330 is the verion ID of clearlinux, or "current", and check which
     rpm packages you want to install,  and then put the name of packages into
     the array extra_rpm_package[] in script-07.
+
+ 4. Occasionally, guestmount will crash and cannot be used on the same image.
+    You can do "mount | grep fuse" to find those mountpoint, and unmount them.
+    For example,
+         $ mount  | grep fuse
+         fusectl on /sys/fs/fuse/connections type fusectl (rw,relatime)
+         gvfsd-fuse on /run/user/1000/gvfs type fuse.gvfsd-fuse (rw,nosuid,nodev,relatime,user_id=1000,group_id=1000)
+         /dev/fuse on /tmp/cl_24400_16990 type fuse (rw,nosuid,nodev,relatime,user_id=1000,group_id=1000)
+
+         $ guestunmount /tmp/cl_24400_16990
+         $ guestunmount /tmp/cl_24400_8841
+ 
+  5. If you want UOS  boot from protected mode instead of real mode, please remove
+     the hv-001-uos-boot-realmode.patch from the dir before the scripts.

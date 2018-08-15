@@ -118,11 +118,13 @@ else
 	mkdir -p firmware
 	cp -a /lib/firmware/intel-ucode firmware
 	cp -a /lib/firmware/i915 firmware
+
+	for pt in `ls ../sos*.patch`; do
+		git am $pt || { echo "Failed to apply patch $pt"; exit 1; }
+	done;
+
 fi;
 
-for pt in `ls ../sos*.patch`; do
-	git am $pt || { echo "Failed to apply patch $pt"; exit 1; }
-done;
 
 # export it in Docker and indicate that SOS source is Ok
 export ACRN_SOS_DIR=${SOS_DIR}

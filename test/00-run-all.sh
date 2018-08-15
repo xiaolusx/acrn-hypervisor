@@ -24,12 +24,20 @@
 
 
 
-# The release# of clearlinux in /usr/lib/os-release: like 23140, we will pull
-# a KVM image from http://clearlinux.org and use it as base image for docker.
-# By default, the latest KVM image by parsing the web page:
+# The release number of clearlinux in /usr/lib/os-release: like 23140, we will
+# pull clearlinux KVM image from http://clearlinux.org and use it as base image
+# for docker as build/development environment. The image is also used to build
+# SOS rootfs. By default, the latest KVM image by parsing the web page:
 #               https://cdn.download.clearlinux.org/current/
-# export ACRN_CLEAR_OS_VERSION=24120
+# export ACRN_CLEAR_OS_VERSION=24400
 export ACRN_CLEAR_OS_VERSION=""
+
+# The commit of acrn-hypervisor, https://github.com/projectacrn/acrn-hypervisor
+# if set to "", latest code will be used. In all cases, if you put any patch
+# with "hv-" prefix in the directory, the patch will be applied on the specified
+# commit or latest code.
+# export ACRN_HV_COMMIT=8ef072165fa64ced0c233dcbcc5059c0bb293e31
+export ACRN_HV_COMMIT=""
 
 # The folder will be mounted into docker as volume in docker's word, to the
 # mounting point at ${ACRN_MNT_VOL}. It is used as work diretory (pwd) to git
@@ -39,8 +47,6 @@ export ACRN_CLEAR_OS_VERSION=""
 # export ACRN_HOST_DIR=/work/vdisk
 export ACRN_HOST_DIR=/home/${USER}/vdisk
 
-# Mounting point in docker for ACRN_HOST_DIR. Needn't touch it
-export ACRN_MNT_VOL=/acrn-vol
 
 # The final disk image layout for qemu/ovmf or dd to disk, change it as u like
 # the name of the image will be ${ACRN_DISK_IMAGE}_clearnnnnn.img, which saying
@@ -52,21 +58,11 @@ export ACRN_DISK_P2=200      # Linux swap
 export ACRN_DISK_P3=3000     # sos rootfs
 export ACRN_DISK_P4=         # user partition uses the rest
 
-# Tell us if we should use sparse file for ${ACRN_DISK_IMAGE}. Note that sparse
-# image is fast to create but might cause fragmentation issue. If u care about
-# fragmentation, you can remove "sparse" even after disk image has been created
-# by    "cp sparse.img raw.img --sparse=never"
-export ACRN_DISK_SPARSE_IMAGE=1
 
 # Docker name created from ACRN_DOCKER_IMAGE as development environment to
 # build ACRN source code and disk image.
 export ACRN_DOCKER_NAME=acrn-dev
 
-# The info is used to git config user.mail & user.name in docker;
-# You can change it to yours if you want. We need to set it because we
-# use "git am" to apply clearlinux-pk414 patches to linux stable tree.
-export ACRN_GIT_USER_NAME="test"
-export ACRN_GIT_USER_EMAIL="test@gmail.com"
 
 # If you are in China, define this. we will try to use mirror of china.
 # like,  www.kernel.org ==> mirror.tuna.tsinghua.edu.cn
@@ -96,9 +92,20 @@ fi;
 # you don't want to trace shell commands.
 # export ACRN_TRACE_SHELL=1
 
-# set this if UOS boots from realmode on virtual SBL; don't set it if UOS boot
-# from protected mode.
-export ACRN_UOS_VSBL=1
+# Tell us if we should use sparse file for ${ACRN_DISK_IMAGE}. Note that sparse
+# image is fast to create but might cause fragmentation issue. If u care about
+# fragmentation, you can remove "sparse" even after disk image has been created
+# by    "cp sparse.img raw.img --sparse=never"
+export ACRN_DISK_SPARSE_IMAGE=1
+
+# The info is used to git config user.mail & user.name in docker;
+# You can change it to yours if you want. We need to set it because we
+# use "git am" to apply clearlinux-pk414 patches to linux stable tree.
+export ACRN_GIT_USER_NAME="test"
+export ACRN_GIT_USER_EMAIL="test@gmail.com"
+
+# Mounting point in docker for ACRN_HOST_DIR. Needn't touch it
+export ACRN_MNT_VOL=/acrn-vol
 
 # Download Clearlinux OS image by the URL. Don't change it unless u know the
 # URL is changed
@@ -126,8 +133,7 @@ if [ ! `pwd` = ${ACRN_HOST_DIR} ]; then
 	cp -af *.sh ${ACRN_HOST_DIR} ||
 	    { echo "check if the dir ${ACRN_HOST_DIR} is writable for \"${USER}\"";
 	    exit 1; }
-	[ -z ${ACRN_UOS_VSBL} ] ||
-		[ ${ACRN_UOS_VSBL} -eq 1 ] && cp *.patch ${ACRN_HOST_DIR}/
+	cp *.patch ${ACRN_HOST_DIR}/
 fi;
 
 cd ${ACRN_HOST_DIR}/
@@ -141,9 +147,8 @@ set -o pipefail
 [ $? -ne 0 ] && exit 1
 
 echo "======================================================================"
-echo -ne "It will take \033[31m hours \033[0m to download clearlinux image and"
-echo -ne " bundles if you are downloading a new version; check it tomorrow if"
-echo -e " you run this script at night"
+echo -e "It might take \033[31mHOURS\033[0m to download clearlinux image and bundles"
+echo -e "if you are downloading a new version; depends on your network"
 echo "======================================================================"
 
 # Pull KVM image of clearlinux, and build a docker image as dev environment
@@ -217,5 +222,6 @@ echo "If failed, trying manually starting qemu by: qemu-system-x86_64 -bios " \
 	${ACRN_HOST_DIR}/${ACRN_UEFI_FW} \
 	-hda "${ACRN_HOST_DIR}/${ACRN_DISK_IMAGE}"
 
-qemu-system-x86_64 -bios ${ACRN_HOST_DIR}/out/${ACRN_UEFI_FW} -hda ${ACRN_HOST_DIR}/out/${ACRN_DISK_IMAGE} -m 4G -cpu Broadwell -smp cpus=4,cores=4,threads=1 -serial stdio
+qemu-system-x86_64 -bios ${ACRN_HOST_DIR}/out/${ACRN_UEFI_FW} -hda ${ACRN_HOST_DIR}/out/${ACRN_DISK_IMAGE} -m 4G -cpu Broadwell -smp cpus=4,cores=4,threads=1 -serial stdio -machine accel=kvm:tcg
+
 
