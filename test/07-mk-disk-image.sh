@@ -245,7 +245,7 @@ rootwait ignore_loglevel no_timer_check consoleblank=0 \
 cma=2560M@0x100000000-0
 EOF
 
-for prefix in  ${extra_rpm_package}; do
+for prefix in  ${extra_rpm_package[*]}; do
 	for pkg in  `grep -Pioe "<a href=\"$prefix.*\.rpm\">" ${ACRN_CLEAR_RPM_PAGE} \
                 | grep -Pioe $prefix.*\.rpm`; do
 
