@@ -114,17 +114,26 @@ else
 		{ echo "Failed to copy SOS kconfig from clear-pk414 git"; exit 1; }
 
 	# apply the patches in pk414 repo to SOS kernel
-	git am ../linux-pk414/*.patch || { echo "Failed to apply linux-pk414 patches to ${SOS_DIR}"; exit 1; }
+	git am ../linux-pk414/*.patch ||
+		{ echo "Failed to apply linux-pk414 patches to ${SOS_DIR}."; exit 1; }
+
 	mkdir -p firmware
 	cp -a /lib/firmware/intel-ucode firmware
 	cp -a /lib/firmware/i915 firmware
 
 	for pt in `ls ../sos*.patch`; do
-		git am $pt || { echo "Failed to apply patch $pt"; exit 1; }
+	        commit_id=`head -1 $pt | awk '{print $2}'`
+		git log -1 ${commit_id} >> /dev/null
+
+		# this patch has been merged already, don't apply it again;
+		[ $? -eq 0 ] && continue;
+
+		# the patch is not merged yet, apply it
+		git am $pt || { echo "Failed to apply patch $pt. Please check if";
+		  echo "the patch has been merged already. If merged, delete it";
+		  echo "from ${ACRN_SOS_DIR} and re-run script-00 from ${ACRN_SOS_DIR} "; exit 1; }
 	done;
-
 fi;
-
 
 # export it in Docker and indicate that SOS source is Ok
 export ACRN_SOS_DIR=${SOS_DIR}

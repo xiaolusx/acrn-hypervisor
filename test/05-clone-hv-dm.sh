@@ -47,11 +47,21 @@ if [ ! "${ret}" == "${BRANCH}" ]; then
 		{ echo "Failed to git checkout branch: ${BRANCH}"; exit 1; }
 
 	for i in `ls ../hv*.patch`; do
+		commit_id=`head -1 $i | awk '{print $2}'`
+		git log -1 ${commit_id} >> /dev/null
+
+		# this patch has been merged already, don't apply it again;
+		[ $? -eq 0 ] && continue;
+
+		# the patch is not merged yet, apply it
 		echo "Patch ${i} to acrn-hypervisor";
-		git am  $i; 
-	       [ $? -ne 0 ] && { echo "Failed to apply $i to hypervisor"; exit 1; }
+		git am  $i || { echo "Failed to apply $i to hypervisor";
+		    echo "Please check if the patch has been merged already. If merged,";
+		    echo "delete it from ${ACRN_HV_DIR} and re-run script-00 from ${ACRN_HV_DIR} "; exit 1; }
 	done;
+
 fi;
+
 
 git checkout ${BRANCH} || \
 	{ echo "Failed to git checkout branch: ${BRANCH}"; exit 1; }

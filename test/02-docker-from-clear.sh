@@ -95,6 +95,10 @@ function build_docker_image()
 		-it ${ACRN_DOCKER_IMAGE}:"t"$1 "/bin/bash"
 
 	docker start ${ACRN_DOCKER_NAME}
+
+	docker exec ${ACRN_DOCKER_NAME} sh -c "/bin/echo -e \
+	    '--retry 10\n--retry-delay 2\n--retry-max-time 0' >> /.curlrc"
+
 #	docker exec ${ACRN_DOCKER_NAME} sh -c "mkdir -p /etc/ssl/certs/"
 	docker exec ${ACRN_DOCKER_NAME} sh -c \
 		"cp ${ACRN_MNT_VOL}/${PEM_SUPD} /usr/share/clar/update-ca/ && \
@@ -132,6 +136,7 @@ function build_docker_image()
 	docker exec ${ACRN_DOCKER_NAME} sh -c "git config --global user.email ${ACRN_GIT_USER_EMAIL}" || exit 1;
 
 	docker stop ${ACRN_DOCKER_NAME}
+	echo "Saving docker image ${ACRN_DOCKER_IMAGE}:$1 to local repo ..."
 	docker commit ${ACRN_DOCKER_NAME} ${ACRN_DOCKER_IMAGE}:$1
 	docker rm ${ACRN_DOCKER_NAME}
 	docker rmi  ${ACRN_DOCKER_IMAGE}:"t"$1

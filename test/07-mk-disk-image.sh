@@ -191,7 +191,7 @@ cp ${PATH_HV_OUT}/hypervisor/acrn.efi ./img_p1/EFI/org.clearlinux/
 
 # if you can set acrn.efi as the first one to boot from UEFI firmware
 # you needn't change BOOTX64.EFI.
-cp ./img_p1/EFI/BOOT/BOOTX64.EFI  ./img_p1/EFI/BOOT/BOOTX64.EFI.orig
+cp ./img_p1/EFI/BOOT/BOOTX64.EFI  ./img_p1/EFI/BOOT/BOOTX64-orig.EFI
 cp ${PATH_HV_OUT}/hypervisor/acrn.efi ./img_p1/EFI/BOOT/BOOTX64.EFI
 
 cp ${BZ_FPATH} ./img_p1/EFI/org.clearlinux/

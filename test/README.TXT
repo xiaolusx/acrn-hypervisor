@@ -172,3 +172,12 @@ QA
  
   5. If you want UOS  boot from protected mode instead of real mode, please remove
      the hv-001-uos-boot-realmode.patch from the dir before the scripts.
+
+
+  6. if you set proxy in host system, like:
+           export https_proxy=https://www.exmple.com
+
+     If the script complant "curl" command failure, try to change the proxy set
+     from https to http:
+           export https_proxy=http://www.exmple.com
+            
