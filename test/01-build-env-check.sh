@@ -28,7 +28,7 @@ function has_docker_group() {
 
 # ensure that all commandlines defined in commands[]
 for cmd in $(echo ${!commands[*]}); do
-	which ${cmd} >> /dev/null && echo ${cmd} "is ok" || echo commands[${cmd}]
+	which ${cmd} >> /dev/null && echo ${cmd} "is ok" || { echo ${commands[${cmd}]}; exit -1; }
 done;
 
 
