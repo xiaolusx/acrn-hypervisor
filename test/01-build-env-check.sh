@@ -32,9 +32,10 @@ for cmd in $(echo ${!commands[*]}); do
 done;
 
 
-group_list=`groups`
-kvm_group=`stat -c %G /dev/kvm`
 CURR_USER=`whoami`
+ret=`groups ${CURR_USER}`
+group_list=${ret#*:}
+kvm_group=`stat -c %G /dev/kvm`
 
 # Ensure that host system has "docker" user group 
 has_docker_group
