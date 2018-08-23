@@ -65,7 +65,12 @@ wget_or_gitclone_kernel() {
 		      echo -n "try update your git and then re-run the scripts"; exit 1; }
 
 		# create a branch with this linux tag, say v4.14.56
-		git branch ${CUR_BRANCH}  && git checkout ${CUR_BRANCH} && return 0;
+		git branch | grep ${CUR_BRANCH}
+		if [ $? -ne 0 ]; then
+			git branch ${CUR_BRANCH} || { echo "Failed to create branch ${CUR_BRANCH}"; return -1; }
+		fi;
+		git checkout ${CUR_BRANCH} && return 0;
+
 	fi;
 
 	# Delete the dir if git clone failed, and then try get xz tarball

@@ -40,8 +40,13 @@ BRANCH="commit_${ACRN_HV_COMMIT}"
 ret=`git branch | grep "${BRANCH}"`
 
 if [ ! "${ret}" == "${BRANCH}" ]; then
-	git branch ${BRANCH} ${ACRN_HV_COMMIT} || \
+
+	# In case we run the script few times, the branch might be create last time
+        git branch | grep ${BRANCH}
+        if [ $? -ne 0 ]; then
+	       git branch ${BRANCH} ${ACRN_HV_COMMIT} || \
 	    { echo "Failed to create branch: ${BRANCH}"; exit 1; }
+	fi;
 
 	git checkout ${BRANCH} || \
 		{ echo "Failed to git checkout branch: ${BRANCH}"; exit 1; }
