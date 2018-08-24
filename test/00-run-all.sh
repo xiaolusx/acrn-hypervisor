@@ -204,24 +204,17 @@ docker exec ${ACRN_DOCKER_NAME} ${ACRN_MNT_VOL}/09-download-ovmf.sh 2>&1 \
 docker exec ${ACRN_DOCKER_NAME} chmod 777 ${ACRN_MNT_VOL}/${ACRN_ENV_VARS}
 docker exec ${ACRN_DOCKER_NAME} chmod 777 ${ACRN_MNT_VOL}/${ACRN_UEFI_FW}
 docker exec ${ACRN_DOCKER_NAME} sh -c "mv ${ACRN_MNT_VOL}/${ACRN_UEFI_FW} ${ACRN_MNT_VOL}/out/"
-
 docker stop  ${ACRN_DOCKER_NAME}
-
-# Comment this if you want to keep the docker as a build environment
-# docker rm  ${ACRN_DOCKER_NAME}
-
-# run qemu/ovmf in local host
-sed -i 's/^ACRN_/export ACRN_/g' ${ACRN_HOST_DIR}/${ACRN_ENV_VARS}
-source ${ACRN_HOST_DIR}/${ACRN_ENV_VARS}
 
 # remove it, otherwise, conflict when run it in the same dir next time
 rm -f ${ACRN_HOST_DIR}/${ACRN_ENV_VARS}
 
 
-echo "If failed, trying manually starting qemu by: qemu-system-x86_64 -bios " \
-	${ACRN_HOST_DIR}/${ACRN_UEFI_FW} \
-	-hda "${ACRN_HOST_DIR}/${ACRN_DISK_IMAGE}"
+# Comment this if you want to keep the docker as a build environment for ACRN hypervisor,
+# SOS(Linux kernel), and ACRN tools
+#
+# docker rm  ${ACRN_DOCKER_NAME}
 
-qemu-system-x86_64 -bios ${ACRN_HOST_DIR}/out/${ACRN_UEFI_FW} -hda ${ACRN_HOST_DIR}/out/${ACRN_DISK_IMAGE} -m 4G -cpu Broadwell -smp cpus=4,cores=4,threads=1 -serial stdio -machine accel=kvm:tcg
+echo "Now you can use script-11 to run ACRN in qemu/ovmf"
 
 
