@@ -134,9 +134,9 @@ else
 		[ $? -eq 0 ] && continue;
 
 		# the patch is not merged yet, apply it
-		git am $pt || { echo "Failed to apply patch $pt. Please check if";
-		  echo "the patch has been merged already. If merged, delete it";
-		  echo "from ${ACRN_SOS_DIR} and re-run script-00 from ${ACRN_SOS_DIR} "; exit 1; }
+		git am $pt || { echo "Failed to apply patch $pt.";
+		  echo "Please check if the patch has been merged already. If merged, delete it";
+		  echo "from ${ACRN_HOST_DIR} and re-run script-00 from ${ACRN_HOST_DIR} "; exit 1; }
 	done;
 fi;
 
