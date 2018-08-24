@@ -210,6 +210,7 @@ cp /usr/lib64/libcrypto.so.1.0.0        ./img_p3/usr/lib64/
 mkdir -p ./img_p3/root/
 cp -R ${LAUNCH_UOS_SCRIPT} ./img_p3/root/
 cp ./${ACRN_HV_DIR}/devicemodel/bios/VSBL* ./img_p3/root/
+cp ./12-create-network-for-uos.sh  ./img_p3/root/
 
 # remove the colorful prompt and terminal, it blinks on uart shell
 touch ./img_p3/root/.dircolors
