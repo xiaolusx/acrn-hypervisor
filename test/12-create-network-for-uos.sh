@@ -36,3 +36,7 @@ Name=acrn-br0
 DHCP=ipv4
 EOF
 
+
+systemctl daemon-reload
+systemctl restart systemd-networkd
+
