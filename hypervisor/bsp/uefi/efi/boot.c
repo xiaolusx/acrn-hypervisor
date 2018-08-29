@@ -371,6 +371,7 @@ efi_main(EFI_HANDLE image, EFI_SYSTEM_TABLE *_table)
 			EfiReservedMemoryType);
 	if (err != EFI_SUCCESS)
 		goto failed;
+	Print(L"config: 0x%lx;  get: 0x%lx\n", CONFIG_RAM_START, hv_hpa);
 
 	memcpy((char *)hv_hpa, info->ImageBase + sec_addr, sec_size);
 

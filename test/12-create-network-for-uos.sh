@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Running this script as root in service OS to create bridged network for UOS
 
 SYSTEMD_NET_DIR=/usr/lib/systemd/network
 
