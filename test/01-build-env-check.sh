@@ -35,7 +35,8 @@ done;
 CURR_USER=`whoami`
 ret=`groups ${CURR_USER}`
 group_list=${ret#*:}
-kvm_group=`stat -c %G /dev/kvm`
+
+
 
 # Ensure that host system has "docker" user group 
 has_docker_group
@@ -57,6 +58,8 @@ if [ $? -eq 0 ]; then
 fi;
 
 # ensure current user is in kvm group
+[ -c /dev/kvm ] || { echo "Failed:  The kernel doesn't supports kvm or kvm modules are not loaded"; exit 1; }
+kvm_group=`stat -c %G /dev/kvm`
 group_in_list ${kvm_group} "${group_list}"
 if [ $? -eq 0 ]; then
 	echo -n "Need to add" \"${CURR_USER}\" "into group" \"${kvm_group}\" "by:"
