@@ -28,14 +28,20 @@
 # which might be unavailable, and in turn, hyperviosr will fail to start.
 #
 
+
 DISK_IMAGE=out/acrn_vdisk_clear24620.img
 
 qemu-system-x86_64 -machine q35,accel=kvm,kernel-irqchip=split -m 4G \
-	-device intel-iommu,intremap=on \
+	-device intel-iommu,intremap=on,x-aw-bits=48,caching-mode=on,device-iotlb=on \
 	-device e1000,netdev=net0 \
 	-netdev user,id=net0 \
 	-bios ./out/OVMF-pure-efi.fd \
 	-drive file=${DISK_IMAGE},if=virtio \
-	-cpu host,level=22 -smp cpus=4,cores=4,threads=1 -serial stdio \
-	-append "uart=port@0x3f8" -kernel out/acrn.efi
+	-smp cpus=4,cores=4,threads=1 -serial stdio \
+	-append "uart=port@0x3f8" -kernel out/acrn.efi \
+	-cpu host,level=22 -smp cpus=4,cores=4,threads=1 
+
+#	-cpu Skylake-Client-IBRS \
+#	-cpu host
+
 
