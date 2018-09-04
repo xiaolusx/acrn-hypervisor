@@ -15,21 +15,18 @@
 # You can compile qemu for yourself or download a binary from Canonical, or
 # upgrade to Ubuntu 18.10 (Cosmic)
 #
-# Since KVM depends on host to emuate some CPU features, we pass "-cpu host"
-# to qemu, that means your host CPUs should support VT-D features, also, cpuid
-# level should no less than 0x16. Override it with the cpuid of your host system.
-#
-#       "cat /proc/cpuinfo | grep level"
-#
-# then, set -cpu host,your_level
-
 # Make sure that CONFIG_RELOC for ACRN hypervisor is enabled during compiling.
 # Otherwise, acrn.efi will try to allocate memory for hypervisor at fixed addr,
 # which might be unavailable, and in turn, hyperviosr will fail to start.
 #
 
-
 DISK_IMAGE=out/acrn_vdisk_clear24620.img
+
+nested=`cat /sys/module/kvm_intel/parameters/nested`
+[ "${nested}X" == "NX"  ] && { echo "Please pass \"nested=y\" for linux kvm-intel.ko module"; exit 1; }
+
+modprobe kvm-intel -r
+modprobe kvm-intel nested=y enable_apicv=y
 
 qemu-system-x86_64 -machine q35,accel=kvm,kernel-irqchip=split -m 4G \
 	-device intel-iommu,intremap=on,x-aw-bits=48,caching-mode=on,device-iotlb=on \
@@ -37,11 +34,12 @@ qemu-system-x86_64 -machine q35,accel=kvm,kernel-irqchip=split -m 4G \
 	-netdev user,id=net0 \
 	-bios ./out/OVMF-pure-efi.fd \
 	-drive file=${DISK_IMAGE},if=virtio \
-	-smp cpus=4,cores=4,threads=1 -serial stdio \
+	-serial stdio \
 	-append "uart=port@0x3f8" -kernel out/acrn.efi \
-	-cpu host,level=22 -smp cpus=4,cores=4,threads=1 
+	-smp cpus=2,cores=2,threads=1 \
+	--enable-kvm \
+	-cpu kvm64,+fpu,+vme,+de,+pse,+tsc,+msr,+pae,+mce,+cx8,+apic,+sep,+mtrr,+pge,+mca,+cmov,+pat,+pse36,+clflush,+acpi,+mmx,+fxsr,+sse,+sse2,+ss,+ht,+tm,+pbe,+syscall,+nx,+pdpe1gb,+rdtscp,+lm,+pni,+pclmulqdq,+dtes64,+monitor,+ds_cpl,+vmx,+smx,+est,+tm2,+ssse3,+fma,+cx16,+xtpr,+pdcm,+pcid,+sse4_1,+sse4_2,+x2apic,+movbe,+popcnt,+tsc-adjust,+tsc-deadline,+aes,+xsave,+avx,+f16c,+rdrand,+lahf_lm,+abm,+3dnowprefetch,+ssbd,+xtpr,+fsgsbase,+tsc_adjust,+bmi1,+hle,+avx2,+smep,+bmi2,+erms,+invpcid,+rtm,+mpx,+rdseed,+adx,+smap,+clflushopt,+xsaveopt,+xsavec,+xgetbv1,+xsaves,+arat,level=21,pmu=true
 
-#	-cpu Skylake-Client-IBRS \
-#	-cpu host
+
 
 

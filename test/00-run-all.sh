@@ -73,9 +73,9 @@ if [ ${ACRN_I_AM_IN_CHINA} -eq 1 ]; then
 
  # The best way is to git clone this stable tree to your local file system;
  # and then, modify this macro to your local git.  For exmaple, we git clone
- # it to home dir, and then, modify this macro to: /home/$USER/linux-stable.
+ # it to home dir, and then, modify this macro to: /home/$USER/vdisk/linux-stable.
  #
-   # export ACRN_LINUX_STABLE_GIT=${ACRN_MNT_VOL}/linux-stable
+   # export ACRN_LINUX_STABLE_GIT=${ACRN_MNT_VOL}/vdisk/linux-stable
     export ACRN_LINUX_STABLE_GIT=https://mirrors.tuna.tsinghua.edu.cn/git/linux-stable.git
      export ACRN_PIP_SOURCE=https://pypi.tuna.tsinghua.edu.cn/simple  # https is required
 
